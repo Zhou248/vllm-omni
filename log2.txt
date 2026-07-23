@@ -1,0 +1,400 @@
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] StageEngineCoreProc failed to start.
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] Traceback (most recent call last):
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_engine_core_proc.py", line 127, in run_stage_core
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     engine_core = StageEngineCoreProc(
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                   ^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/v1/engine/core.py", line 966, in __init__
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     super().__init__(
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/v1/engine/core.py", line 133, in __init__
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     kv_cache_config = self._initialize_kv_caches(vllm_config)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/v1/engine/core.py", line 283, in _initialize_kv_caches
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     available_gpu_memory = self.model_executor.determine_available_memory()
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/v1/executor/abstract.py", line 147, in determine_available_memory
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return self.collective_rpc("determine_available_memory")
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/v1/executor/uniproc_executor.py", line 92, in collective_rpc
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     result = run_method(self.driver_worker, method, args, kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/v1/serial_utils.py", line 510, in run_method
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm-ascend/vllm_ascend/worker/worker.py", line 564, in determine_available_memory
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     self.model_runner.profile_run()
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm-ascend/vllm_ascend/worker/model_runner_v1.py", line 3816, in profile_run
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     super().profile_run()
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/v1/worker/gpu_model_runner.py", line 6387, in profile_run
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     hidden_states, last_hidden_states = self._dummy_run(
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                                         ^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/home/z00909726/vllm-omni/vllm_omni/platforms/npu/worker/npu_model_runner.py", line 307, in _dummy_run
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     outputs = self.model(
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]               ^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return self._call_impl(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return forward_call(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/home/z00909726/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/minicpmo_4_5_omni.py", line 259, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     thinker_output = self.thinker(
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                      ^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return self._call_impl(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return forward_call(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/home/z00909726/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/minicpmo_4_5_omni_llm.py", line 4326, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     hidden_states = self.llm.model(input_ids, positions, intermediate_tensors, inputs_embeds=inputs_embeds)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/compilation/decorators.py", line 663, in __call__
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     self.aot_compiled_fn = self.aot_compile(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/compilation/wrapper.py", line 169, in aot_compile
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return self._compiled_callable.aot_compile((args, kwargs))
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 832, in aot_compile
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return aot_compile_fullgraph(
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/aot_compile.py", line 195, in aot_compile_fullgraph
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     capture_output = convert_frame.fullgraph_capture(model, args, kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1208, in fullgraph_capture
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return _fullgraph_capture_frame(
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]            ^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1273, in _fullgraph_capture_frame
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     raise e.with_traceback(None) from e.__cause__  # User compiler error
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] torch._dynamo.exc.Unsupported: Import failure
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   Explanation: Failure when attempting to import.
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   Hint: Dynamo has detected that tracing the code will result in an error when running in eager. Please double check that your code doesn't contain a similar error when actually running eager/uncompiled.
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] 
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   Developer debug context: module_name: vllm_ascend.vllm_ascend_C, fromlist: None, level=0
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] 
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]  For more details about this graph break, please visit: https://meta-pytorch.github.io/compile-graph-break-site/gb/gb0069.html
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] 
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] from user code:
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]    File "/vllm-workspace/vllm/vllm/model_executor/models/qwen2.py", line 419, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     hidden_states, residual = layer(positions, hidden_states, residual)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/model_executor/models/qwen3.py", line 240, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm/vllm/model_executor/custom_op.py", line 136, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     return self._forward_method(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm-ascend/vllm_ascend/ops/layernorm.py", line 72, in forward_oot
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     if enable_custom_op():
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]   File "/vllm-workspace/vllm-ascend/vllm_ascend/utils.py", line 435, in enable_custom_op
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176]     import vllm_ascend.vllm_ascend_C  # type: ignore  # noqa: F401
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] 
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+(StageEngineCoreProc_stage0_replica0 pid=41403) ERROR 07-23 07:33:56 [stage_engine_core_proc.py:176] 
+(StageEngineCoreProc_stage0_replica0 pid=41403) Process StageEngineCoreProc_stage0_replica0:
+(StageEngineCoreProc_stage0_replica0 pid=41403) Traceback (most recent call last):
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/multiprocessing/process.py", line 314, in _bootstrap
+(StageEngineCoreProc_stage0_replica0 pid=41403)     self.run()
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/multiprocessing/process.py", line 108, in run
+(StageEngineCoreProc_stage0_replica0 pid=41403)     self._target(*self._args, **self._kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_engine_core_proc.py", line 127, in run_stage_core
+(StageEngineCoreProc_stage0_replica0 pid=41403)     engine_core = StageEngineCoreProc(
+(StageEngineCoreProc_stage0_replica0 pid=41403)                   ^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/v1/engine/core.py", line 966, in __init__
+(StageEngineCoreProc_stage0_replica0 pid=41403)     super().__init__(
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/v1/engine/core.py", line 133, in __init__
+(StageEngineCoreProc_stage0_replica0 pid=41403)     kv_cache_config = self._initialize_kv_caches(vllm_config)
+(StageEngineCoreProc_stage0_replica0 pid=41403)                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/tracing/otel.py", line 178, in sync_wrapper
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/v1/engine/core.py", line 283, in _initialize_kv_caches
+(StageEngineCoreProc_stage0_replica0 pid=41403)     available_gpu_memory = self.model_executor.determine_available_memory()
+(StageEngineCoreProc_stage0_replica0 pid=41403)                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/v1/executor/abstract.py", line 147, in determine_available_memory
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return self.collective_rpc("determine_available_memory")
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/v1/executor/uniproc_executor.py", line 92, in collective_rpc
+(StageEngineCoreProc_stage0_replica0 pid=41403)     result = run_method(self.driver_worker, method, args, kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/v1/serial_utils.py", line 510, in run_method
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm-ascend/vllm_ascend/worker/worker.py", line 564, in determine_available_memory
+(StageEngineCoreProc_stage0_replica0 pid=41403)     self.model_runner.profile_run()
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm-ascend/vllm_ascend/worker/model_runner_v1.py", line 3816, in profile_run
+(StageEngineCoreProc_stage0_replica0 pid=41403)     super().profile_run()
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/v1/worker/gpu_model_runner.py", line 6387, in profile_run
+(StageEngineCoreProc_stage0_replica0 pid=41403)     hidden_states, last_hidden_states = self._dummy_run(
+(StageEngineCoreProc_stage0_replica0 pid=41403)                                         ^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/utils/_contextlib.py", line 124, in decorate_context
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return func(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/home/z00909726/vllm-omni/vllm_omni/platforms/npu/worker/npu_model_runner.py", line 307, in _dummy_run
+(StageEngineCoreProc_stage0_replica0 pid=41403)     outputs = self.model(
+(StageEngineCoreProc_stage0_replica0 pid=41403)               ^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return self._call_impl(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return forward_call(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/home/z00909726/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/minicpmo_4_5_omni.py", line 259, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403)     thinker_output = self.thinker(
+(StageEngineCoreProc_stage0_replica0 pid=41403)                      ^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1776, in _wrapped_call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return self._call_impl(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/nn/modules/module.py", line 1787, in _call_impl
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return forward_call(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/home/z00909726/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/minicpmo_4_5_omni_llm.py", line 4326, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403)     hidden_states = self.llm.model(input_ids, positions, intermediate_tensors, inputs_embeds=inputs_embeds)
+(StageEngineCoreProc_stage0_replica0 pid=41403)                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/compilation/decorators.py", line 663, in __call__
+(StageEngineCoreProc_stage0_replica0 pid=41403)     self.aot_compiled_fn = self.aot_compile(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)                            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/compilation/wrapper.py", line 169, in aot_compile
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return self._compiled_callable.aot_compile((args, kwargs))
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 832, in aot_compile
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return aot_compile_fullgraph(
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/aot_compile.py", line 195, in aot_compile_fullgraph
+(StageEngineCoreProc_stage0_replica0 pid=41403)     capture_output = convert_frame.fullgraph_capture(model, args, kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1208, in fullgraph_capture
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return _fullgraph_capture_frame(
+(StageEngineCoreProc_stage0_replica0 pid=41403)            ^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/convert_frame.py", line 1273, in _fullgraph_capture_frame
+(StageEngineCoreProc_stage0_replica0 pid=41403)     raise e.with_traceback(None) from e.__cause__  # User compiler error
+(StageEngineCoreProc_stage0_replica0 pid=41403)     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage0_replica0 pid=41403) torch._dynamo.exc.Unsupported: Import failure
+(StageEngineCoreProc_stage0_replica0 pid=41403)   Explanation: Failure when attempting to import.
+(StageEngineCoreProc_stage0_replica0 pid=41403)   Hint: Dynamo has detected that tracing the code will result in an error when running in eager. Please double check that your code doesn't contain a similar error when actually running eager/uncompiled.
+(StageEngineCoreProc_stage0_replica0 pid=41403) 
+(StageEngineCoreProc_stage0_replica0 pid=41403)   Developer debug context: module_name: vllm_ascend.vllm_ascend_C, fromlist: None, level=0
+(StageEngineCoreProc_stage0_replica0 pid=41403) 
+(StageEngineCoreProc_stage0_replica0 pid=41403)  For more details about this graph break, please visit: https://meta-pytorch.github.io/compile-graph-break-site/gb/gb0069.html
+(StageEngineCoreProc_stage0_replica0 pid=41403) 
+(StageEngineCoreProc_stage0_replica0 pid=41403) from user code:
+(StageEngineCoreProc_stage0_replica0 pid=41403)    File "/vllm-workspace/vllm/vllm/model_executor/models/qwen2.py", line 419, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403)     hidden_states, residual = layer(positions, hidden_states, residual)
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/model_executor/models/qwen3.py", line 240, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403)     hidden_states, residual = self.post_attention_layernorm(hidden_states, residual)
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm/vllm/model_executor/custom_op.py", line 136, in forward
+(StageEngineCoreProc_stage0_replica0 pid=41403)     return self._forward_method(*args, **kwargs)
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm-ascend/vllm_ascend/ops/layernorm.py", line 72, in forward_oot
+(StageEngineCoreProc_stage0_replica0 pid=41403)     if enable_custom_op():
+(StageEngineCoreProc_stage0_replica0 pid=41403)   File "/vllm-workspace/vllm-ascend/vllm_ascend/utils.py", line 435, in enable_custom_op
+(StageEngineCoreProc_stage0_replica0 pid=41403)     import vllm_ascend.vllm_ascend_C  # type: ignore  # noqa: F401
+(StageEngineCoreProc_stage0_replica0 pid=41403) 
+(StageEngineCoreProc_stage0_replica0 pid=41403) Set TORCHDYNAMO_VERBOSE=1 for the internal stack trace (please do this especially if you're reporting a bug to PyTorch). For even more developer context, set TORCH_LOGS="+dynamo"
+(StageEngineCoreProc_stage0_replica0 pid=41403) 
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251] [StageRuntime] Stage initialization failed; shutting down 0 initialized client(s)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251] Traceback (most recent call last):
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 238, in initialize
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 499, in _initialize_stage_replicas
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     raise primary_exc
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 460, in _init_group
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     client = self._initialize_replica(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]              ^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 525, in _initialize_replica
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     return self._initialize_local_llm_replica(plan, stage_init_timeout)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 572, in _initialize_local_llm_replica
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     with launch_stage_replica(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]          ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/usr/local/python3.12.13/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     next(self.gen)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_engine_startup.py", line 1037, in launch_stage_replica
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     wait_for_engine_startup(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]   File "/vllm-workspace/vllm/vllm/v1/engine/utils.py", line 1272, in wait_for_engine_startup
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251]     raise RuntimeError(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [stage_runtime.py:251] RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463] [AsyncOmniEngine] Orchestrator thread crashed
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463] Traceback (most recent call last):
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 457, in _bootstrap_orchestrator
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     loop.run_until_complete(_run_orchestrator())
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/usr/local/python3.12.13/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     return future.result()
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]            ^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 433, in _run_orchestrator
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     self._initialize_stages(stage_init_timeout)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 383, in _initialize_stages
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     self._runtime.initialize()
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 257, in initialize
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     raise exc
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 238, in initialize
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 499, in _initialize_stage_replicas
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     raise primary_exc
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 460, in _init_group
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     client = self._initialize_replica(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]              ^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 525, in _initialize_replica
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     return self._initialize_local_llm_replica(plan, stage_init_timeout)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 572, in _initialize_local_llm_replica
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     with launch_stage_replica(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]          ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/usr/local/python3.12.13/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     next(self.gen)
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_engine_startup.py", line 1037, in launch_stage_replica
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     wait_for_engine_startup(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]   File "/vllm-workspace/vllm/vllm/v1/engine/utils.py", line 1272, in wait_for_engine_startup
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463]     raise RuntimeError(
+(APIServer pid=41377) ERROR 07-23 07:34:07 [async_omni_engine.py:463] RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+(APIServer pid=41377) INFO 07-23 07:34:07 [async_omni_engine.py:1556] [AsyncOmniEngine] Shutting down Orchestrator
+(APIServer pid=41377) Exception in thread orchestrator:
+(APIServer pid=41377) Traceback (most recent call last):
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+(APIServer pid=41377)     self.run()
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/threading.py", line 1012, in run
+(APIServer pid=41377)     self._target(*self._args, **self._kwargs)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 457, in _bootstrap_orchestrator
+(APIServer pid=41377)     loop.run_until_complete(_run_orchestrator())
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+(APIServer pid=41377)     return future.result()
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 433, in _run_orchestrator
+(APIServer pid=41377)     self._initialize_stages(stage_init_timeout)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 383, in _initialize_stages
+(APIServer pid=41377)     self._runtime.initialize()
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 257, in initialize
+(APIServer pid=41377)     raise exc
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 238, in initialize
+(APIServer pid=41377)     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+(APIServer pid=41377)                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 499, in _initialize_stage_replicas
+(APIServer pid=41377)     raise primary_exc
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 460, in _init_group
+(APIServer pid=41377)     client = self._initialize_replica(
+(APIServer pid=41377)              ^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 525, in _initialize_replica
+(APIServer pid=41377)     return self._initialize_local_llm_replica(plan, stage_init_timeout)
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 572, in _initialize_local_llm_replica
+(APIServer pid=41377)     with launch_stage_replica(
+(APIServer pid=41377)          ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=41377)     next(self.gen)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_engine_startup.py", line 1037, in launch_stage_replica
+(APIServer pid=41377)     wait_for_engine_startup(
+(APIServer pid=41377)   File "/vllm-workspace/vllm/vllm/v1/engine/utils.py", line 1272, in wait_for_engine_startup
+(APIServer pid=41377)     raise RuntimeError(
+(APIServer pid=41377) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+(APIServer pid=41377) Traceback (most recent call last):
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/threading.py", line 1075, in _bootstrap_inner
+(APIServer pid=41377)     self.run()
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/threading.py", line 1012, in run
+(APIServer pid=41377)     self._target(*self._args, **self._kwargs)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 457, in _bootstrap_orchestrator
+(APIServer pid=41377)     loop.run_until_complete(_run_orchestrator())
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/asyncio/base_events.py", line 691, in run_until_complete
+(APIServer pid=41377)     return future.result()
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 433, in _run_orchestrator
+(APIServer pid=41377)     self._initialize_stages(stage_init_timeout)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 383, in _initialize_stages
+(APIServer pid=41377)     self._runtime.initialize()
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 257, in initialize
+(APIServer pid=41377)     raise exc
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 238, in initialize
+(APIServer pid=41377)     initialized_clients = self._initialize_stage_replicas(stage_plans, self._stage_init_timeout)
+(APIServer pid=41377)                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 499, in _initialize_stage_replicas
+(APIServer pid=41377)     raise primary_exc
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 460, in _init_group
+(APIServer pid=41377)     client = self._initialize_replica(
+(APIServer pid=41377)              ^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 525, in _initialize_replica
+(APIServer pid=41377)     return self._initialize_local_llm_replica(plan, stage_init_timeout)
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_runtime.py", line 572, in _initialize_local_llm_replica
+(APIServer pid=41377)     with launch_stage_replica(
+(APIServer pid=41377)          ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/contextlib.py", line 144, in __exit__
+(APIServer pid=41377)     next(self.gen)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/stage_engine_startup.py", line 1037, in launch_stage_replica
+(APIServer pid=41377)     wait_for_engine_startup(
+(APIServer pid=41377)   File "/vllm-workspace/vllm/vllm/v1/engine/utils.py", line 1272, in wait_for_engine_startup
+(APIServer pid=41377)     raise RuntimeError(
+(APIServer pid=41377) RuntimeError: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+(APIServer pid=41377) 
+(APIServer pid=41377) The above exception was the direct cause of the following exception:
+(APIServer pid=41377) 
+(APIServer pid=41377) Traceback (most recent call last):
+(APIServer pid=41377)   File "/usr/local/python3.12.13/bin/vllm", line 6, in <module>
+(APIServer pid=41377)     sys.exit(main())
+(APIServer pid=41377)              ^^^^^^
+(APIServer pid=41377)   File "/vllm-workspace/vllm/vllm/entrypoints/cli/main.py", line 55, in main
+(APIServer pid=41377)     omni_main()
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/cli/main.py", line 72, in main
+(APIServer pid=41377)     args.dispatch_function(args)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/cli/serve.py", line 107, in cmd
+(APIServer pid=41377)     uvloop.run(omni_run_server(args))
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/uvloop/__init__.py", line 96, in run
+(APIServer pid=41377)     return __asyncio.run(
+(APIServer pid=41377)            ^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/asyncio/runners.py", line 195, in run
+(APIServer pid=41377)     return runner.run(main)
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/asyncio/runners.py", line 118, in run
+(APIServer pid=41377)     return self._loop.run_until_complete(task)
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "uvloop/loop.pyx", line 1518, in uvloop.loop.Loop.run_until_complete
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/site-packages/uvloop/__init__.py", line 48, in wrapper
+(APIServer pid=41377)     return await main
+(APIServer pid=41377)            ^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/openai/api_server.py", line 457, in omni_run_server
+(APIServer pid=41377)     await omni_run_server_worker(listen_address, sock, args, **uvicorn_kwargs)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/openai/api_server.py", line 484, in omni_run_server_worker
+(APIServer pid=41377)     async with build_async_omni(
+(APIServer pid=41377)                ^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=41377)     return await anext(self.gen)
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/openai/api_server.py", line 628, in build_async_omni
+(APIServer pid=41377)     async with build_async_omni_from_stage_config(
+(APIServer pid=41377)                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/contextlib.py", line 210, in __aenter__
+(APIServer pid=41377)     return await anext(self.gen)
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/openai/api_server.py", line 694, in build_async_omni_from_stage_config
+(APIServer pid=41377)     async_omni = AsyncOmni(model=model, **kwargs)
+(APIServer pid=41377)                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/async_omni.py", line 141, in __init__
+(APIServer pid=41377)     OmniBase.__init__(self, model=model, **kwargs)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/entrypoints/omni_base.py", line 173, in __init__
+(APIServer pid=41377)     self.engine = AsyncOmniEngine(
+(APIServer pid=41377)                   ^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 336, in __init__
+(APIServer pid=41377)     self._wait_for_orchestrator_init(startup_future, startup_timeout)
+(APIServer pid=41377)   File "/home/z00909726/vllm-omni/vllm_omni/engine/async_omni_engine.py", line 501, in _wait_for_orchestrator_init
+(APIServer pid=41377)     startup_future.result(
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/concurrent/futures/_base.py", line 456, in result
+(APIServer pid=41377)     return self.__get_result()
+(APIServer pid=41377)            ^^^^^^^^^^^^^^^^^^^
+(APIServer pid=41377)   File "/usr/local/python3.12.13/lib/python3.12/concurrent/futures/_base.py", line 401, in __get_result
+(APIServer pid=41377)     raise self._exception
+(APIServer pid=41377) RuntimeError: Orchestrator initialization failed: Engine core initialization failed. See root cause above. Failed core proc(s): {}
+(APIServer pid=41377) [ERROR] 2026-07-23-07:34:07 (PID:41377, Device:-1, RankID:-1) ERR99999 UNKNOWN applicaiton exception
