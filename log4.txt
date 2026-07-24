@@ -1,0 +1,74 @@
+curl http://localhost:8889/v1/chat/completions \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "/home/z00909726/minicpm/OpenBMB/MiniCPM-o-4_5",
+    "messages": [
+      {"role": "user", "content": "Say hello, then introduce vLLM in one sentence."}
+    ],
+    "modalities": ["text", "audio"],
+    "audio": {
+      "voice": "default",
+      "format": "wav"
+    },
+    "chat_template_kwargs": {"use_tts_template": true}
+  }'
+{"error":{"message":"1 validation error for OmniChatCompletionResponse\nchoices.1\n  Input should be a valid dictionary or instance of ChatCompletionResponseChoice [type=model_type, input_value=('error', ErrorInfo(messa..., param=None, code=400)), input_type=tuple]\n    For further information visit https://errors.pydantic.dev/2.13/v/model_type","type":"BadRequestError","param":null,"code":400}
+
+
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(StageEngineCoreProc_stage1_replica0 pid=56032) INFO 07-23 14:51:06 [minicpmo_4_5_omni_tts.py:802] 4.5 Talker: async chunk req=chatcmpl-9a574b970f0c3ce1-92f307c4 tokens=10 finished=False
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] 
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] [Overall Summary]
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] +-----------------------------+------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | Field                       |      Value |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] +-----------------------------+------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | e2e_requests                |          1 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | e2e_wall_time_ms            | 20,163.461 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | e2e_total_tokens            |      4,117 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | e2e_avg_time_per_request_ms | 20,163.461 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | e2e_avg_tokens_per_s        |    204.181 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | input_preprocess_time_ms    |     46.903 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | e2e_stage_0_wall_time_ms    |  2,277.470 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] | e2e_stage_1_wall_time_ms    | 20,106.213 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:752] +-----------------------------+------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] 
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] [RequestE2EStats [request_id=chatcmpl-9a574b970f0c3ce1-92f307c4]]
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] +------------------+------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] | Field            |      Value |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] +------------------+------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] | e2e_total_ms     | 20,107.088 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] | e2e_total_tokens |      4,117 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:778] +------------------+------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:819] [OmniTiming] req=chatcmpl-9a574b970f0c3ce1-92f307c4 total=20.11s preprocess=0.05s engine=20.06s stages=[0:2.28s,1:20.11s] transfers=[0->1=0.00ms]
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] 
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] [StageRequestStats [request_id=chatcmpl-9a574b970f0c3ce1-92f307c4]]
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] +---------------------------------+---------------+----------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | Field                           |             0 |              1 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] +---------------------------------+---------------+----------------+
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | batch_id                        |             1 |              1 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | batch_size                      |             1 |              1 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | inter_output_latencies_ms       |               |                |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | num_tokens_in                   |            21 |              0 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | num_tokens_out                  |            26 |          4,070 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | output_unit_count               |            26 |          4,070 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | output_unit_type                |          text |          audio |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | serving_time_to_first_output_ms |     2,333.374 |     20,162.960 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | stage_gen_time_ms               |     2,276.813 |     20,105.760 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | time_per_output_unit_ms         |         0.003 |          0.000 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | vllm_itl_ms                     |        77.056 |          4.606 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | vllm_itls_ms                    | 77.056 (n=25) | 4.606 (n=4069) |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | vllm_tpot_ms                    |        77.056 |          4.606 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] | vllm_ttft_ms                    |       405.445 |      1,362.955 |
+(APIServer pid=55342) INFO 07-23 14:51:06 [stats.py:861] +---------------------------------+---------------+----------------+
+(APIServer pid=55342) INFO:     127.0.0.1:33638 - "POST /v1/chat/completions HTTP/1.1" 400 Bad Request
