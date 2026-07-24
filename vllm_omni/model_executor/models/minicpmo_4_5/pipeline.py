@@ -1,6 +1,6 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
-"""MiniCPM-o 4.5 pipeline topology.
+"""MiniCPM-o 4.5 pipeline topology (frozen).
 
 Stage 0: Thinker — multimodal understanding + text generation.
 Stage 1: Talker  — MiniCPMTTS + Token2Wav, emits the final audio waveform.
@@ -46,7 +46,6 @@ MINICPMO_4_5_PIPELINE = PipelineConfig(
             owns_tokenizer=True,
             requires_multimodal_data=True,
             engine_output_type="latent",
-            async_chunk_process_next_stage_input_func=(f"{_PROC}.llm2tts_async_chunk"),
             sampling_constraints={"detokenize": True},
         ),
         StagePipelineConfig(
@@ -72,10 +71,7 @@ MINICPMO_4_5_PIPELINE = PipelineConfig(
             final_output_type="audio",
             hf_config_name="tts_config",
             engine_output_type="audio",
-            # The original full-result bridge is selected only when
-            # ``async_chunk`` is disabled. In async mode, stage 0 sends
-            # incremental token/hidden chunks directly through the connector.
-            sync_process_input_func=f"{_PROC}.llm2tts",
+            custom_process_input_func=f"{_PROC}.llm2tts",
             sampling_constraints={"detokenize": False},
         ),
     ),

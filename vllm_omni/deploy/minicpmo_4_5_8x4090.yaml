@@ -18,12 +18,6 @@
 pipeline: minicpmo_4_5
 async_chunk: false
 
-connectors:
-  thinker_talker_connector:
-    name: SharedMemoryConnector
-    extra:
-      thinker_text_chunk_size: 10
-
 trust_remote_code: true
 enable_prefix_caching: false
 
@@ -55,14 +49,11 @@ stages:
     enforce_eager: true
     max_num_batched_tokens: 8192
     devices: "4"
-    input_connectors:
-      from_stage_0: thinker_talker_connector
     default_sampling_params:
       temperature: 0.0
       top_p: 1.0
       top_k: -1
-      max_tokens: 4096
-      stop_token_ids: [1]
+      max_tokens: 1
       seed: 42
       detokenize: false
 

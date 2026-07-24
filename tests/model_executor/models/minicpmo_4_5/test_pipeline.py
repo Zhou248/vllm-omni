@@ -6,8 +6,7 @@ Covers:
   - pipeline declared in the central registry
   - lazy loader returns the expected ``PipelineConfig``
   - 2-stage topology (thinker LLM_AR + talker LLM_AR with audio output)
-  - async mode routes through ``llm2tts_async_chunk``
-  - sync mode preserves the original ``llm2tts`` bridge
+  - stage 1 routes through ``llm2tts`` custom input processor
   - ``hf_architectures`` covers both the shared ``MiniCPMO`` alias and the
     explicit 4.5 arch
   - ``hf_config_predicate`` selects MiniCPM-o 4.5 only and rejects 2.6
@@ -22,10 +21,8 @@ import pytest
 
 from vllm_omni.config.pipeline_registry import OMNI_PIPELINES
 from vllm_omni.config.stage_config import (
-    DeployConfig,
     PipelineConfig,
     StageExecutionType,
-    merge_pipeline_deploy,
 )
 
 pytestmark = [pytest.mark.core_model, pytest.mark.cpu]
@@ -71,9 +68,6 @@ class TestPipelineTopology:
         assert thinker.final_output_type == "text"
         assert thinker.owns_tokenizer is True
         assert thinker.requires_multimodal_data is True
-        assert thinker.async_chunk_process_next_stage_input_func == (
-            "vllm_omni.model_executor.stage_input_processors.minicpmo_4_5_omni.llm2tts_async_chunk"
-        )
 
     def test_talker_stage(self, pipeline: PipelineConfig) -> None:
         talker = pipeline.get_stage(1)
@@ -88,33 +82,15 @@ class TestPipelineTopology:
         # scope KV cache / mrope sizing to talker sub-config
         assert talker.hf_config_name == "tts_config"
 
-    def test_talker_preserves_sync_llm2tts_bridge(
-        self,
-        pipeline: PipelineConfig,
-    ) -> None:
+    def test_talker_routes_through_llm2tts(self, pipeline: PipelineConfig) -> None:
         talker = pipeline.get_stage(1)
         assert talker is not None
-        # Async mode receives connector payloads directly. The old full-result
-        # conversion is selected only when the deploy has async_chunk=false.
-        assert talker.custom_process_input_func is None
-        assert talker.sync_process_input_func == (
+        # stage 1's custom_process_input_func is what bridges thinker
+        # hidden_states + token ids into the talker; if this drifts the
+        # talker silently goes through the dummy path.
+        assert talker.custom_process_input_func == (
             "vllm_omni.model_executor.stage_input_processors.minicpmo_4_5_omni.llm2tts"
         )
-
-    def test_sync_and_async_processor_dispatch(self, pipeline: PipelineConfig) -> None:
-        sync_stages = merge_pipeline_deploy(
-            pipeline,
-            DeployConfig(async_chunk=False),
-        )
-        assert "custom_process_next_stage_input_func" not in sync_stages[0].yaml_engine_args
-        assert sync_stages[1].custom_process_input_func.endswith("llm2tts")
-
-        async_stages = merge_pipeline_deploy(
-            pipeline,
-            DeployConfig(async_chunk=True),
-        )
-        assert async_stages[0].yaml_engine_args["custom_process_next_stage_input_func"].endswith("llm2tts_async_chunk")
-        assert async_stages[1].custom_process_input_func is None
 
 
 class TestArchAliases:

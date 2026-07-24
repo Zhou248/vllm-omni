@@ -44,31 +44,6 @@ vllm serve openbmb/MiniCPM-o-4_5 --omni \
     --host 0.0.0.0 --port 8099
 ```
 
-### Overlap Thinker and Talker
-
-The shipped configs keep `async_chunk: false` as the compatibility default.
-Enable chunked Thinker-to-Talker transfer explicitly:
-
-```bash
-vllm serve openbmb/MiniCPM-o-4_5 --omni \
-    --deploy-config vllm_omni/deploy/minicpmo_4_5_2gpu.yaml \
-    --async-chunk \
-    --trust-remote-code \
-    --host 0.0.0.0 --port 8099
-```
-
-In this mode the Thinker sends aligned groups of 10 generated text tokens
-and hidden states while decoding is still in progress. The Talker keeps its
-TTS KV cache across groups and Token2Wav emits waveform deltas in 25-audio-token
-windows. A split layout (for example `minicpmo_4_5_2gpu.yaml`) provides real
-device overlap; the single-device config supports the same protocol but the
-two stages still contend for one accelerator.
-
-The checkpoint's remote-code snapshot must provide
-`utils.TTSStreamingGenerator` for early waveform output. Older snapshots
-remain functional, but collect the transferred text chunks and run the
-original full Talker path at the terminal chunk.
-
 ### Stage-based CLI (optional)
 
 Stage 0 (thinker + API) and stage 1 (talker) can run in separate processes:
@@ -176,8 +151,7 @@ root; nested `extra_body` is ignored. The OpenAI Python SDK may use
 ## Notes
 
 - Stage 1 is capped at `max_num_seqs: 1` in the deploy YAML (talker shares
-  a stateful Token2Wav backend; per-request TTS and vocoder caches are released
-  on completion or abort).
+  request-0 audio metadata).
 - Output audio is base64 WAV in `message.audio.data` (24 kHz mono).
 - Offline counterpart:
   [`examples/offline_inference/minicpmo/`](../../offline_inference/minicpmo/)

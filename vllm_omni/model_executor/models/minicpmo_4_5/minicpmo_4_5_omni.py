@@ -24,11 +24,7 @@ import torch
 import torch.nn as nn
 from vllm.config import VllmConfig
 from vllm.logger import init_logger
-from vllm.model_executor.models.interfaces import (
-    SupportsMRoPE,
-    SupportsMultiModal,
-    SupportsPP,
-)
+from vllm.model_executor.models.interfaces import SupportsMRoPE, SupportsMultiModal, SupportsPP
 from vllm.model_executor.models.utils import init_vllm_registered_model, maybe_prefix
 from vllm.multimodal import MULTIMODAL_REGISTRY
 from vllm.sequence import IntermediateTensors
@@ -386,9 +382,3 @@ class MiniCPMO45OmniForConditionalGeneration(nn.Module, SupportsMultiModal, Supp
             loaded_weights.update(talker_loaded)
 
         return loaded_weights
-
-    def on_requests_finished(self, request_ids: set[str] | list[str]) -> None:
-        """Delegate per-request streaming-state cleanup to the active stage."""
-        cleanup = getattr(self.model, "on_requests_finished", None)
-        if cleanup is not None:
-            cleanup(request_ids)
