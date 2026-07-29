@@ -1,0 +1,150 @@
+.(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207] MiniCPM-o Code2Wav failed to capture NPU graph for setup; this tensor shape will stay eager.
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207] Traceback (most recent call last):
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 204, in _run_graphable
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     self._npu_graphs[key] = self._capture_npu_graph(inputs, compute)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 161, in _capture_npu_graph
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     static_outputs = compute(*static_inputs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]                      ^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 482, in <lambda>
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     lambda *values: self._setup_tensor_batch(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]                     ^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 455, in _setup_tensor_batch
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     hidden, conformer_cnn, conformer_att = self._encode_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]                                            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 284, in _encode_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     hidden, new_cnn, new_att = self.flow.encoder.forward_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 953, in compile_wrapper
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/cosyvoice2/transformer/upsample_encoder_v2.py", line 408, in forward_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     @torch.compile(dynamic=True,backend="eager")
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]   File "<eval_with_key>.13", line 302, in forward
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]     conv1d = torch.conv1d(outputs, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_, (1,), (0,), (1,), 1);  outputs = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_ = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_ = None
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207] RuntimeError: Cannot run aclop operators during NPU graph capture. Current working aclop is Conv2D. If you need this call to be captured, please try to set torch.npu.config.allow_internal_format = False. If still fail, the operator needs aclnn implementation and please file an issue. Current npuStreamCaptureStatus: npuStreamCaptureStatusActive
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:49:48 [batched_token2wav.py:207] [ERROR] 2026-07-29-08:49:48 (PID:166589, Device:0, RankID:-1) ERR00007 PTA feature not supported
+..(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207] MiniCPM-o Code2Wav failed to capture NPU graph for decode; this tensor shape will stay eager.
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207] Traceback (most recent call last):
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 204, in _run_graphable
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     self._npu_graphs[key] = self._capture_npu_graph(inputs, compute)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 161, in _capture_npu_graph
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     static_outputs = compute(*static_inputs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]                      ^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 647, in <lambda>
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     lambda *values: self._decode_tensor_batch(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 543, in _decode_tensor_batch
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     hidden, conformer_cnn, conformer_att = self._encode_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]                                            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 284, in _encode_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     hidden, new_cnn, new_att = self.flow.encoder.forward_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 953, in compile_wrapper
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/cosyvoice2/transformer/upsample_encoder_v2.py", line 408, in forward_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     @torch.compile(dynamic=True,backend="eager")
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]   File "<eval_with_key>.15", line 309, in forward
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]     conv1d = torch.conv1d(outputs, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_, (1,), (0,), (1,), 1);  outputs = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_ = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_ = None
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207] RuntimeError: Cannot run aclop operators during NPU graph capture. Current working aclop is Conv2D. If you need this call to be captured, please try to set torch.npu.config.allow_internal_format = False. If still fail, the operator needs aclnn implementation and please file an issue. Current npuStreamCaptureStatus: npuStreamCaptureStatusActive
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:24 [batched_token2wav.py:207] [ERROR] 2026-07-29-08:50:24 (PID:166589, Device:0, RankID:-1) ERR00007 PTA feature not supported
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] MiniCPM-o Code2Wav failed to capture NPU graph for decode; this tensor shape will stay eager.
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] Traceback (most recent call last):
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 204, in _run_graphable
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     self._npu_graphs[key] = self._capture_npu_graph(inputs, compute)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 161, in _capture_npu_graph
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     static_outputs = compute(*static_inputs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                      ^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 647, in <lambda>
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     lambda *values: self._decode_tensor_batch(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 543, in _decode_tensor_batch
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     hidden, conformer_cnn, conformer_att = self._encode_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                                            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 284, in _encode_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     hidden, new_cnn, new_att = self.flow.encoder.forward_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 953, in compile_wrapper
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/cosyvoice2/transformer/upsample_encoder_v2.py", line 408, in forward_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     @torch.compile(dynamic=True,backend="eager")
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "<eval_with_key>.15", line 309, in forward
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     conv1d = torch.conv1d(outputs, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_, (1,), (0,), (1,), 1);  outputs = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_ = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_ = None
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] RuntimeError: Cannot run aclop operators during NPU graph capture. Current working aclop is Conv2D. If you need this call to be captured, please try to set torch.npu.config.allow_internal_format = False. If still fail, the operator needs aclnn implementation and please file an issue. Current npuStreamCaptureStatus: npuStreamCaptureStatusActive
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] [ERROR] 2026-07-29-08:50:25 (PID:166589, Device:0, RankID:-1) ERR00007 PTA feature not supported
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] MiniCPM-o Code2Wav failed to capture NPU graph for decode; this tensor shape will stay eager.
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] Traceback (most recent call last):
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 204, in _run_graphable
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     self._npu_graphs[key] = self._capture_npu_graph(inputs, compute)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 161, in _capture_npu_graph
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     static_outputs = compute(*static_inputs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                      ^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 647, in <lambda>
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     lambda *values: self._decode_tensor_batch(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 543, in _decode_tensor_batch
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     hidden, conformer_cnn, conformer_att = self._encode_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                                            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 284, in _encode_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     hidden, new_cnn, new_att = self.flow.encoder.forward_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 953, in compile_wrapper
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/cosyvoice2/transformer/upsample_encoder_v2.py", line 408, in forward_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     @torch.compile(dynamic=True,backend="eager")
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]   File "<eval_with_key>.15", line 309, in forward
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]     conv1d = torch.conv1d(outputs, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_, (1,), (0,), (1,), 1);  outputs = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_ = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_ = None
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] RuntimeError: Cannot run aclop operators during NPU graph capture. Current working aclop is Conv2D. If you need this call to be captured, please try to set torch.npu.config.allow_internal_format = False. If still fail, the operator needs aclnn implementation and please file an issue. Current npuStreamCaptureStatus: npuStreamCaptureStatusActive
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:25 [batched_token2wav.py:207] [ERROR] 2026-07-29-08:50:25 (PID:166589, Device:0, RankID:-1) ERR00007 PTA feature not supported
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207] MiniCPM-o Code2Wav failed to capture NPU graph for decode; this tensor shape will stay eager.
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207] Traceback (most recent call last):
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 204, in _run_graphable
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     self._npu_graphs[key] = self._capture_npu_graph(inputs, compute)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]                             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 161, in _capture_npu_graph
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     static_outputs = compute(*static_inputs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]                      ^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 647, in <lambda>
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     lambda *values: self._decode_tensor_batch(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]                     ^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 543, in _decode_tensor_batch
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     hidden, conformer_cnn, conformer_att = self._encode_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]                                            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/home/z00909726/vllm-omni-0727/vllm-omni/vllm_omni/model_executor/models/minicpmo_4_5/batched_token2wav.py", line 284, in _encode_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     hidden, new_cnn, new_att = self.flow.encoder.forward_chunk(
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 953, in compile_wrapper
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/cosyvoice2/transformer/upsample_encoder_v2.py", line 408, in forward_chunk
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     @torch.compile(dynamic=True,backend="eager")
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "/usr/local/python3.12.13/lib/python3.12/site-packages/torch/_dynamo/eval_frame.py", line 1181, in _fn
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     return fn(*args, **kwargs)
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]            ^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]   File "<eval_with_key>.17", line 310, in forward
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]     conv1d = torch.conv1d(outputs, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_, l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_, (1,), (0,), (1,), 1);  outputs = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_weight_ = l_self_modules_pre_lookahead_layer_modules_conv1_parameters_bias_ = None
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207]              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207] RuntimeError: Cannot run aclop operators during NPU graph capture. Current working aclop is Conv2D. If you need this call to be captured, please try to set torch.npu.config.allow_internal_format = False. If still fail, the operator needs aclnn implementation and please file an issue. Current npuStreamCaptureStatus: npuStreamCaptureStatusActive
+(StageEngineCoreProc_stage2_replica0 pid=166589) WARNING 07-29 08:50:46 [batched_token2wav.py:207] [ERROR] 2026-07-29-08:50:46 (PID:166589, Device:0, RankID:-1) ERR00007 PTA feature not supported
