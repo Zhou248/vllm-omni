@@ -72,6 +72,28 @@ single-GPU entry point; `minicpmo_4_5_batching.yaml` is the recommended
 two-GPU profile. The removed fused two-stage implementation is not retained as
 a fallback because it would duplicate state machines and correctness paths.
 
+### Graph execution
+
+Graph boundaries follow each stage's state model:
+
+| Stage | Graph mode on Ascend | Eager boundary |
+| --- | --- | --- |
+| 0 Thinker | vLLM `PIECEWISE` | multimodal preprocessing and output routing |
+| 1 Talker | vLLM `PIECEWISE` | conditioning preprocessing, codec sampling, request-state updates |
+| 2 Code2Wav | inner exact-shape NPUGraph for prompt setup and Flow/CFM/HiFT decode | request parsing, shape bucketing, stream-state commit |
+
+Stage 2 keeps `enforce_eager: true` for the generation runner because its
+Python request metadata and per-request cache dictionaries are not valid
+outer-graph inputs. The tensor-only backend captures lazily by batch size,
+token length, terminal flags, prompt length, and cache tensor shapes. It stores
+up to 32 graphs by default and falls back to eager execution for unsupported
+operators, failed captures, or additional shapes. Tune or disable this with
+`code2wav_max_npu_graphs` and `code2wav_enable_npu_graph` in the connector
+`extra` config.
+
+The inner NPUGraph is independent of the outer runner setting, so do not use a
+global `--enforce-eager` override when Stage 0/1 `PIECEWISE` replay is desired.
+
 ## GPU
 
 ### 1 x GPU (default — single command)
@@ -208,8 +230,8 @@ speech output (TTS)"** checkbox on / off.
 - `--trust-remote-code` is required — the HF repo ships a custom
   `MiniCPMO` config / model class.
 - Stage 0 Thinker and Stage 1 Talker enable vLLM CUDA Graphs. Stage 2 remains
-  eager because its request-owned Flow/HiFT caches and variable chunk/cache
-  shapes are not yet exposed through a static exact-shape graph wrapper.
+  eager on CUDA. On Ascend, its request orchestration stays eager while the
+  exact-shape Flow/CFM/HiFT backend uses inner NPUGraph replay.
 - All default stages use `max_num_seqs: 4` to reduce cross-process GPU
   contention. Talker AR
   state and Code2Wav caches are request-owned; Code2Wav batches only
@@ -220,8 +242,8 @@ speech output (TTS)"** checkbox on / off.
 - `StageRequestStats.batch_size` is a request-scoped placeholder, not the
   scheduler's execution batch.
 - Single-GPU co-location trades throughput for hardware density: Stage 0/1
-  CUDA Graph replay and eager Stage 2 vocoder kernels compete across three
-  CUDA contexts. Use the 8x4090 config or a custom multi-GPU mapping for
+  CUDA Graph replay and Stage 2 vocoder kernels compete across three CUDA
+  contexts. Use the 8x4090 config or a custom multi-GPU mapping for
   throughput-sensitive serving.
 
 ### 8 x RTX 4090 24GB (consumer-GPU layout)

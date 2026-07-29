@@ -43,6 +43,14 @@ def _scalar(value: Any, default: Any = None) -> Any:
     return default if value is None else value
 
 
+def _config_bool(value: Any, default: bool) -> bool:
+    if value is None:
+        return default
+    if isinstance(value, str):
+        return value.strip().lower() in {"1", "true", "yes", "on"}
+    return bool(value)
+
+
 def _codec_tensor(value: Any, fallback: torch.Tensor) -> torch.Tensor:
     if isinstance(value, torch.Tensor):
         return value.reshape(-1).to(device=fallback.device, dtype=torch.long)
@@ -775,4 +783,18 @@ class MiniCPMO45Code2Wav(nn.Module):
             )
         finally:
             torch.set_default_dtype(previous_dtype)
-        self.backend = BatchedToken2Wav(token2wav)
+        enable_npu_graphs = current_omni_platform.is_npu() and _config_bool(
+            extra.get("code2wav_enable_npu_graph"),
+            True,
+        )
+        max_npu_graphs = max(0, int(extra.get("code2wav_max_npu_graphs", 32)))
+        self.backend = BatchedToken2Wav(
+            token2wav,
+            enable_npu_graphs=enable_npu_graphs,
+            max_npu_graphs=max_npu_graphs,
+        )
+        if enable_npu_graphs:
+            logger.info(
+                "MiniCPM-o Code2Wav NPU graph replay enabled (max_graphs=%d)",
+                max_npu_graphs,
+            )

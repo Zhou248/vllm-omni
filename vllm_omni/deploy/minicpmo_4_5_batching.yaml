@@ -17,6 +17,10 @@ connectors:
       connector_get_max_wait: 300
       codec_chunk_frames: 25
       codec_left_context_frames: 3
+      # Stage 2 keeps request/state orchestration eager, while its exact-shape
+      # Flow/CFM/HiFT tensor kernels replay through inner NPUGraphs on Ascend.
+      code2wav_enable_npu_graph: true
+      code2wav_max_npu_graphs: 32
 
 stages:
   - stage_id: 0
@@ -61,6 +65,8 @@ stages:
   - stage_id: 2
     max_num_seqs: 4
     gpu_memory_utilization: 0.35
+    # Dynamic request bucketing cannot use the runner's outer full graph.
+    # The Code2Wav backend captures its static tensor buckets internally.
     enforce_eager: true
     enable_chunked_prefill: false
     max_num_batched_tokens: 65536

@@ -7,6 +7,7 @@ import torch.nn as nn
 
 from vllm_omni.model_executor.models.minicpmo_4_5.batched_token2wav import (
     BatchedToken2Wav,
+    _CapturedDeviceGraph,
 )
 from vllm_omni.model_executor.models.minicpmo_4_5.minicpmo_4_5_code2wav import (
     MiniCPMO45Code2Wav,
@@ -253,6 +254,161 @@ def test_fade_in_out_limits_overlap_to_available_previous_audio():
     expected = speech.clone()
     expected[..., :3] = speech[..., :3] * window[:3] + previous * window[-3:]
     torch.testing.assert_close(actual, expected)
+
+
+def test_captured_graph_replay_clones_persistent_outputs():
+    static_input = torch.zeros(1)
+    static_output = torch.zeros(1)
+
+    class _Graph:
+        def replay(self):
+            static_output.copy_(static_input * 2)
+
+    graph = _CapturedDeviceGraph(
+        graph=_Graph(),
+        static_inputs=(static_input,),
+        static_outputs=(static_output,),
+    )
+
+    first = graph.replay((torch.tensor([2.0]),))[0]
+    second = graph.replay((torch.tensor([3.0]),))[0]
+
+    torch.testing.assert_close(first, torch.tensor([4.0]))
+    torch.testing.assert_close(second, torch.tensor([6.0]))
+    assert first.data_ptr() != second.data_ptr()
+
+
+def test_npu_graph_dispatch_captures_and_replays_exact_shape_buckets(monkeypatch):
+    token2wav = _FakeToken2Wav()
+    adapter = BatchedToken2Wav(token2wav, enable_npu_graphs=True)
+    prompt = adapter.prepare_prompt("shared", "/fake/prompt.wav")
+    replay_count = 0
+
+    class _FunctionalGraph:
+        def __init__(self, compute):
+            self.compute = compute
+
+        def replay(self, inputs):
+            nonlocal replay_count
+            replay_count += 1
+            return tuple(output.detach().clone() for output in self.compute(*inputs))
+
+    monkeypatch.setattr(adapter, "_npu_graph_eligible", lambda inputs: True)
+    monkeypatch.setattr(
+        adapter,
+        "_capture_npu_graph",
+        lambda inputs, compute: _FunctionalGraph(compute),
+    )
+
+    first_states = adapter.setup_batch(prompt, 1)
+    second_states = adapter.setup_batch(prompt, 1)
+    first_audio, first_next = adapter.decode_batch(
+        torch.tensor([[10, 11]]),
+        prompt,
+        first_states,
+        last_chunk=False,
+    )
+    second_audio, second_next = adapter.decode_batch(
+        torch.tensor([[20, 21]]),
+        prompt,
+        second_states,
+        last_chunk=False,
+    )
+
+    assert adapter.npu_graph_stats == {"captures": 2, "failed": 0, "hits": 2}
+    assert replay_count == 2
+    torch.testing.assert_close(first_audio[0][0], torch.tensor(17.0))
+    torch.testing.assert_close(second_audio[0][0], torch.tensor(34.0))
+    first_cache = first_next[0].flow_cache["estimator_cnn_cache"].clone()
+
+    third_states = adapter.setup_batch(prompt, 1)
+    adapter.decode_batch(
+        torch.tensor([[30, 31]]),
+        prompt,
+        third_states,
+        last_chunk=False,
+    )
+
+    torch.testing.assert_close(
+        first_next[0].flow_cache["estimator_cnn_cache"],
+        first_cache,
+    )
+    assert (
+        second_next[0].flow_cache["estimator_cnn_cache"].data_ptr()
+        != first_next[0].flow_cache["estimator_cnn_cache"].data_ptr()
+    )
+
+
+def test_npu_graph_capture_failure_is_cached_and_falls_back(monkeypatch):
+    adapter = BatchedToken2Wav(
+        _FakeToken2Wav(),
+        enable_npu_graphs=True,
+    )
+    captures = 0
+
+    def fail_capture(inputs, compute):
+        nonlocal captures
+        captures += 1
+        raise RuntimeError("unsupported op")
+
+    monkeypatch.setattr(adapter, "_npu_graph_eligible", lambda inputs: True)
+    monkeypatch.setattr(adapter, "_capture_npu_graph", fail_capture)
+
+    def compute(value):
+        return (value + 1,)
+
+    first = adapter._run_graphable(
+        "unit",
+        (torch.tensor([1.0]),),
+        (False,),
+        compute,
+    )
+    second = adapter._run_graphable(
+        "unit",
+        (torch.tensor([2.0]),),
+        (False,),
+        compute,
+    )
+
+    torch.testing.assert_close(first[0], torch.tensor([2.0]))
+    torch.testing.assert_close(second[0], torch.tensor([3.0]))
+    assert captures == 1
+    assert adapter.npu_graph_stats == {"captures": 0, "failed": 1, "hits": 0}
+
+
+def test_npu_graph_key_separates_terminal_decode_branch(monkeypatch):
+    adapter = BatchedToken2Wav(
+        _FakeToken2Wav(),
+        enable_npu_graphs=True,
+    )
+
+    class _FunctionalGraph:
+        def __init__(self, compute):
+            self.compute = compute
+
+        def replay(self, inputs):
+            return self.compute(*inputs)
+
+    monkeypatch.setattr(adapter, "_npu_graph_eligible", lambda inputs: True)
+    monkeypatch.setattr(
+        adapter,
+        "_capture_npu_graph",
+        lambda inputs, compute: _FunctionalGraph(compute),
+    )
+
+    def run(last_chunk, flush_encoder=False):
+        return adapter._run_graphable(
+            "decode",
+            (torch.tensor([1.0]),),
+            (last_chunk, flush_encoder, 4),
+            lambda value: (value + (10 if last_chunk else 1) + (100 if flush_encoder else 0),),
+        )[0]
+
+    torch.testing.assert_close(run(False), torch.tensor([2.0]))
+    torch.testing.assert_close(run(False), torch.tensor([2.0]))
+    torch.testing.assert_close(run(True), torch.tensor([11.0]))
+    torch.testing.assert_close(run(False, True), torch.tensor([102.0]))
+    assert adapter.npu_graph_stats == {"captures": 3, "failed": 0, "hits": 1}
 
 
 def test_estimator_cache_stack_split_round_trip_preserves_cfg_rows():
