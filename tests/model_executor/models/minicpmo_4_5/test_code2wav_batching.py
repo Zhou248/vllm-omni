@@ -11,6 +11,7 @@ from vllm_omni.model_executor.models.minicpmo_4_5.batched_token2wav import (
 )
 from vllm_omni.model_executor.models.minicpmo_4_5.minicpmo_4_5_code2wav import (
     MiniCPMO45Code2Wav,
+    _prepare_npu_graph_runtime,
 )
 
 pytestmark = [pytest.mark.core_model, pytest.mark.cpu]
@@ -276,6 +277,20 @@ def test_captured_graph_replay_clones_persistent_outputs():
     torch.testing.assert_close(first, torch.tensor([4.0]))
     torch.testing.assert_close(second, torch.tensor([6.0]))
     assert first.data_ptr() != second.data_ptr()
+
+
+def test_npu_graph_runtime_disables_internal_format_and_jit(monkeypatch):
+    compile_modes = []
+    fake_npu = SimpleNamespace(
+        config=SimpleNamespace(allow_internal_format=True),
+        set_compile_mode=lambda **kwargs: compile_modes.append(kwargs),
+    )
+    monkeypatch.setattr(torch, "npu", fake_npu, raising=False)
+
+    _prepare_npu_graph_runtime()
+
+    assert fake_npu.config.allow_internal_format is False
+    assert compile_modes == [{"jit_compile": False}]
 
 
 def test_npu_graph_dispatch_captures_and_replays_exact_shape_buckets(monkeypatch):
