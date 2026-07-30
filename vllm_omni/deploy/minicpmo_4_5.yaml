@@ -16,7 +16,7 @@ connectors:
       codec_left_context_frames: 3
       # Stage 2 keeps encoder, HiFT, RNG, and request/state orchestration eager.
       # Only exact-shape CFM DiT estimator kernels replay through NPUGraph.
-      code2wav_enable_npu_graph: true
+      code2wav_enable_npu_graph: false
       code2wav_max_npu_graphs: 32
 
 stages:

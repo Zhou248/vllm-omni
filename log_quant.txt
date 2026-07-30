@@ -1,0 +1,329 @@
+100%|██████████| 40/40 [55:39<00:00, 83.49s/it]          | 0/1 [00:00<?, ?it/s]
+[2026-07-30 18:49:47,135] INFO: Generating video used time  3353.7816s
+Dump calib data by float model inference: 100%|██████████| 1/1 [55:53<00:00, 3353.78s/it]
+2026-07-30 18:49:48,995 - msmodelslim.model.wan2_2.base_model_adapter - INFO - Captured data saved to: '/home/z00909726/weight/arc_w4a4f4/calib_data_t2v_low_noise_model.pth'
+2026-07-30 18:49:50,626 - msmodelslim.model.wan2_2.base_model_adapter - INFO - Captured data saved to: '/home/z00909726/weight/arc_w4a4f4/calib_data_t2v_high_noise_model.pth'
+2026-07-30 18:49:50,626 - msmodelslim.model.wan2_2.base_model_adapter - INFO - ======== Calib data generated successfully ========
+2026-07-30 18:49:50,627 - msmodelslim.model.wan2_2.base_model_adapter - INFO - prepare calib_data from /home/z00909726/weight/arc_w4a4f4 success
+2026-07-30 18:49:50,805 - msmodelslim.core.quant_service.multimodal_sd_v1 - INFO - ==========QUANTIZATION: Run Quantization==========
+2026-07-30 18:49:50,806 - msmodelslim.core.quant_service.multimodal_sd_v1 - INFO - ========== Quantizing low_noise_model ==========
+2026-07-30 18:49:50,806 - msmodelslim.core.quant_service.multimodal_sd_v1 - WARNING - ========== QUANTIZATION: Prepare Save Path ==========
+2026-07-30 18:49:50,806 - msmodelslim.core.quant_service.multimodal_sd_v1 - WARNING - prepare Persistence to /home/z00909726/weight/arc_w4a4f4/low_noise_model success
+2026-07-30 18:49:50,806 - msmodelslim.core.quant_service.multimodal_sd_v1 - INFO - ========== low_noise_model Prior Stage 1/1 ==========
+2026-07-30 18:49:50,881 - msmodelslim.core.runner.layer_wise_runner - INFO - Start to handle dataset
+2026-07-30 18:49:50,881 - msmodelslim.core.runner.layer_wise_runner - INFO - Handle dataset success
+2026-07-30 18:49:50,886 - msmodelslim.core.runner.layer_wise_runner - INFO - KV cache requirement: False
+2026-07-30 18:49:50,886 - msmodelslim.core.runner.layer_wise_runner - INFO - Scheduler 3 unit: [LoadProcessor(device=npu:0, non_blocking=False), ARCQuantCalibProcessor, LoadProcessor(device=meta, non_blocking=False)]
+2026-07-30 18:49:50,890 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.0"
+2026-07-30 18:51:11,084 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.0"
+2026-07-30 18:53:12,621 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.0"
+2026-07-30 18:53:13,322 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.1"
+2026-07-30 18:53:13,722 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.1"
+2026-07-30 18:55:20,539 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.1"
+2026-07-30 18:55:21,237 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.2"
+2026-07-30 18:55:25,897 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.2"
+2026-07-30 18:57:23,888 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.2"
+2026-07-30 18:57:24,618 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.3"
+2026-07-30 18:57:28,604 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.3"
+2026-07-30 18:59:24,551 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.3"
+2026-07-30 18:59:25,232 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.4"
+2026-07-30 18:59:28,638 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.4"
+2026-07-30 19:01:24,110 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.4"
+2026-07-30 19:01:24,837 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.5"
+2026-07-30 19:01:27,676 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.5"
+2026-07-30 19:04:17,255 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.5"
+2026-07-30 19:04:17,950 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.6"
+2026-07-30 19:04:20,962 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.6"
+2026-07-30 19:07:14,368 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.6"
+2026-07-30 19:07:15,081 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.7"
+2026-07-30 19:07:18,365 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.7"
+2026-07-30 19:10:16,016 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.7"
+2026-07-30 19:10:16,711 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.8"
+2026-07-30 19:10:19,958 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.8"
+2026-07-30 19:13:16,121 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.8"
+2026-07-30 19:13:16,826 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.9"
+2026-07-30 19:13:20,241 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.9"
+2026-07-30 19:16:19,143 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.9"
+2026-07-30 19:16:19,825 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.10"
+2026-07-30 19:16:23,202 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.10"
+2026-07-30 19:19:20,672 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.10"
+2026-07-30 19:19:21,346 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.11"
+2026-07-30 19:19:24,730 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.11"
+2026-07-30 19:22:20,220 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.11"
+2026-07-30 19:22:20,899 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.12"
+2026-07-30 19:22:24,190 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.12"
+2026-07-30 19:25:18,337 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.12"
+2026-07-30 19:25:19,043 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.13"
+2026-07-30 19:25:22,422 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.13"
+2026-07-30 19:28:21,421 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.13"
+2026-07-30 19:28:22,103 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.14"
+2026-07-30 19:28:26,037 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.14"
+2026-07-30 19:31:27,446 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.14"
+2026-07-30 19:31:28,135 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.15"
+2026-07-30 19:31:31,356 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.15"
+2026-07-30 19:34:26,578 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.15"
+2026-07-30 19:34:27,256 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.16"
+2026-07-30 19:34:30,964 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.16"
+2026-07-30 19:37:33,799 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.16"
+2026-07-30 19:37:34,488 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.17"
+2026-07-30 19:37:37,786 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.17"
+2026-07-30 19:40:33,703 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.17"
+2026-07-30 19:40:34,404 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.18"
+2026-07-30 19:40:38,028 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.18"
+2026-07-30 19:43:33,785 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.18"
+2026-07-30 19:43:34,467 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.19"
+2026-07-30 19:43:37,738 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.19"
+2026-07-30 19:46:34,406 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.19"
+2026-07-30 19:46:35,082 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.20"
+2026-07-30 19:46:38,685 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.20"
+2026-07-30 19:49:35,011 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.20"
+2026-07-30 19:49:35,688 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.21"
+2026-07-30 19:49:38,963 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.21"
+2026-07-30 19:52:33,440 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.21"
+2026-07-30 19:52:34,142 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.22"
+2026-07-30 19:52:37,736 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.22"
+2026-07-30 19:55:35,996 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.22"
+2026-07-30 19:55:36,670 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.23"
+2026-07-30 19:55:39,892 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.23"
+2026-07-30 19:58:35,557 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.23"
+2026-07-30 19:58:36,258 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.24"
+2026-07-30 19:58:39,799 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.24"
+2026-07-30 20:01:34,385 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.24"
+2026-07-30 20:01:35,072 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.25"
+2026-07-30 20:01:38,289 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.25"
+2026-07-30 20:04:34,667 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.25"
+2026-07-30 20:04:35,341 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.26"
+2026-07-30 20:04:38,770 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.26"
+2026-07-30 20:07:34,193 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.26"
+2026-07-30 20:07:34,882 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.27"
+2026-07-30 20:07:38,052 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.27"
+2026-07-30 20:10:31,691 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.27"
+2026-07-30 20:10:32,374 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.28"
+2026-07-30 20:10:35,753 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.28"
+2026-07-30 20:13:31,333 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.28"
+2026-07-30 20:13:32,022 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.29"
+2026-07-30 20:13:35,081 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.29"
+2026-07-30 20:16:30,249 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.29"
+2026-07-30 20:16:30,943 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.30"
+2026-07-30 20:16:34,016 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.30"
+2026-07-30 20:19:27,280 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.30"
+2026-07-30 20:19:27,969 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.31"
+2026-07-30 20:19:31,075 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.31"
+2026-07-30 20:22:26,334 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.31"
+2026-07-30 20:22:27,010 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.32"
+2026-07-30 20:22:30,072 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.32"
+2026-07-30 20:25:24,837 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.32"
+2026-07-30 20:25:25,518 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.33"
+2026-07-30 20:25:28,597 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.33"
+2026-07-30 20:28:22,340 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.33"
+2026-07-30 20:28:23,024 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.34"
+2026-07-30 20:28:26,078 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.34"
+2026-07-30 20:31:21,747 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.34"
+2026-07-30 20:31:22,427 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.35"
+2026-07-30 20:31:25,444 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.35"
+2026-07-30 20:34:20,472 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.35"
+2026-07-30 20:34:21,150 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.36"
+2026-07-30 20:34:24,188 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.36"
+2026-07-30 20:37:18,596 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.36"
+2026-07-30 20:37:19,299 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.37"
+2026-07-30 20:37:22,298 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.37"
+2026-07-30 20:40:16,643 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.37"
+2026-07-30 20:40:17,315 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.38"
+2026-07-30 20:40:20,285 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.38"
+2026-07-30 20:43:14,780 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.38"
+2026-07-30 20:43:15,459 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=npu:0, non_blocking=False) for "blocks.39"
+2026-07-30 20:43:18,454 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor ARCQuantCalibProcessor for "blocks.39"
+2026-07-30 20:46:11,297 - msmodelslim.core.runner.layer_wise_runner - INFO - Run processor LoadProcessor(device=meta, non_blocking=False) for "blocks.39"
+2026-07-30 20:46:37,528 - msmodelslim.core.quant_service.multimodal_sd_v1 - ERROR - ========== low_noise_model quantization failed: Cannot copy out of meta tensor; no data! ==========
+2026-07-30 20:46:37,528 - msmodelslim.app.naive_quantization - ERROR - [UnexpectedError] Code: 500, Message: Unexpected error., TIP: Please report this issue to the msModelSlim developers. Repository: https://gitcode.com/Ascend/msmodelslim Q&A: https://gitcode.com/Ascend/msmodelslim/blob/master/docs/zh/support/faq.md
+2026-07-30 20:46:37,529 - msmodelslim.app.naive_quantization - ERROR - Original exception: RuntimeError('========== low_noise_model quantization failed: Cannot copy out of meta tensor; no data! ==========')
+2026-07-30 20:46:37,533 - msmodelslim.app.naive_quantization - ERROR - Traceback: Traceback (most recent call last):
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 293, in _quantize_multi_expert_models
+    with expert_adapter.quantization_context():
+  File "/usr/local/python3.11.10/lib/python3.11/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/model/wan2_2/base_model_adapter.py", line 387, in _quantization_context_with_no_sync
+    module.to('cpu')
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/contrib/transfer_to_npu.py", line 182, in decorated
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/utils/_module.py", line 78, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 957, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/utils/_module.py", line 76, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/contrib/transfer_to_npu.py", line 182, in decorated
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+NotImplementedError: Cannot copy out of meta tensor; no data!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/exception_decorator.py", line 236, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/app/naive_quantization/application.py", line 450, in quant
+    self._quant(
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/app/naive_quantization/application.py", line 501, in _quant
+    self.quant_service.quantize(
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/proxy/quant_service.py", line 90, in quantize
+    quant_service.quantize(
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 135, in quantize
+    return self.quant_process(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 151, in quant_process
+    return self._quant_process(quant_config, model_adapter, save_path, device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 416, in _quant_process
+    self.quantize_multi_expert_models(config)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 157, in quantize_multi_expert_models
+    return self._quantize_multi_expert_models(config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 302, in _quantize_multi_expert_models
+    raise RuntimeError(f"========== {expert_name} quantization failed: {str(e)} ==========") from e
+RuntimeError: ========== low_noise_model quantization failed: Cannot copy out of meta tensor; no data! ==========
+
+iling.cc, line 190
+[Warning]: tiling struct [MC2MatmulV3TilingData] is conflict with one in file hccl_formulaic_tiling.cc, line 198
+[Warning]: tiling struct [TileInfo] is conflict with one in file hccl_formulaic_tiling.cc, line 190
+[Warning]: tiling struct [MC2MatmulV3TilingData] is conflict with one in file hccl_formulaic_tiling.cc, line 198
+[Warning]: tiling struct [TileInfo] is conflict with one in file hccl_formulaic_tiling.cc, line 190
+[Warning]: tiling struct [MC2MatmulV3TilingData] is conflict with one in file hccl_formulaic_tiling.cc, line 198
+[Warning]: tiling struct [TileInfo] is conflict with one in file hccl_formulaic_tiling.cc, line 190
+[Warning]: tiling struct [MC2MatmulV3TilingData] is conflict with one in file hccl_formulaic_tiling.cc, line 198
+[Warning]: tiling struct [TileInfo] is conflict with one in file hccl_formulaic_tiling.cc, line 190
+[Warning]: tiling struct [MC2MatmulV3TilingData] is conflict with one in file hccl_formulaic_tiling.cc, line 198
+[Warning]: tiling struct [TileInfo] is conflict with one in file hccl_formulaic_tiling.cc, line 190
+[Warning]: tiling struct [MC2MatmulV3TilingData] is conflict with one in file hccl_formulaic_tiling.cc, line 198
+[Warning]: tiling struct [TileInfo] is conflict with one in file hccl_formulaic_tiling.cc, line 190
+[Warning]: tiling struct [MC2MatmulV3TilingData] is conflict with one in file hccl_formulaic_tiling.cc, line 198
+Traceback (most recent call last):
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 293, in _quantize_multi_expert_models
+    with expert_adapter.quantization_context():
+  File "/usr/local/python3.11.10/lib/python3.11/contextlib.py", line 137, in __enter__
+    return next(self.gen)
+           ^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/model/wan2_2/base_model_adapter.py", line 387, in _quantization_context_with_no_sync
+    module.to('cpu')
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/contrib/transfer_to_npu.py", line 182, in decorated
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/utils/_module.py", line 78, in to
+    return self._apply(convert)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 930, in _apply
+    module._apply(fn)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch/nn/modules/module.py", line 957, in _apply
+    param_applied = fn(param)
+                    ^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/utils/_module.py", line 76, in convert
+    return t.to(device, dtype if t.is_floating_point() or t.is_complex() else None, non_blocking)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/torch_npu/contrib/transfer_to_npu.py", line 182, in decorated
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+NotImplementedError: Cannot copy out of meta tensor; no data!
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/exception_decorator.py", line 236, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/app/naive_quantization/application.py", line 450, in quant
+    self._quant(
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/app/naive_quantization/application.py", line 501, in _quant
+    self.quant_service.quantize(
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/proxy/quant_service.py", line 90, in quantize
+    quant_service.quantize(
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 135, in quantize
+    return self.quant_process(
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 151, in quant_process
+    return self._quant_process(quant_config, model_adapter, save_path, device)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 416, in _quant_process
+    self.quantize_multi_expert_models(config)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 157, in quantize_multi_expert_models
+    return self._quantize_multi_expert_models(config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/core/quant_service/multimodal_sd_v1/quant_service.py", line 302, in _quantize_multi_expert_models
+    raise RuntimeError(f"========== {expert_name} quantization failed: {str(e)} ==========") from e
+RuntimeError: ========== low_noise_model quantization failed: Cannot copy out of meta tensor; no data! ==========
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/python3.11.10/bin/msmodelslim", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/cli/__main__.py", line 281, in main
+    quant_main(args)
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/cli/naive_quantization/__main__.py", line 91, in main
+    app.quant(
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/logging.py", line 314, in wrapper
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/python3.11.10/lib/python3.11/site-packages/msmodelslim/utils/exception_decorator.py", line 247, in wrapper
+    raise unexpected_error from e
+msmodelslim.utils.exception.UnexpectedError: Code: 500, Message: Unexpected error.
+TIP: Please report this issue to the msModelSlim developers. Repository: https://gitcode.com/Ascend/msmodelslim Q&A: https://gitcode.com/Ascend/msmodelslim/blob/master/docs/zh/support/faq.md
+[ERROR] 2026-07-30-20:46:38 (PID:91231, Device:0, RankID:-1) ERR99999 UNKNOWN applicaiton exception
