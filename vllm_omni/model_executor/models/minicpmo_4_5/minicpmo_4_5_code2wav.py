@@ -53,6 +53,11 @@ def _config_bool(value: Any, default: bool) -> bool:
 
 def _prepare_npu_graph_runtime() -> None:
     """Select graph-capturable ACLNN kernels before Token2Wav is loaded."""
+    if os.environ.get("ASCEND_LAUNCH_BLOCKING") == "1":
+        raise RuntimeError(
+            "MiniCPM-o Code2Wav NPU graph capture is incompatible with "
+            "ASCEND_LAUNCH_BLOCKING=1; unset it or set it to 0 before startup."
+        )
     npu = torch.npu
     npu.config.allow_internal_format = False
     npu.set_compile_mode(jit_compile=False)

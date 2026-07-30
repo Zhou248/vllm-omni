@@ -80,16 +80,22 @@ Graph boundaries follow each stage's state model:
 | --- | --- | --- |
 | 0 Thinker | vLLM `PIECEWISE` | multimodal preprocessing and output routing |
 | 1 Talker | vLLM `PIECEWISE` | conditioning preprocessing, codec sampling, request-state updates |
-| 2 Code2Wav | inner exact-shape NPUGraph for prompt setup and Flow/CFM/HiFT decode | request parsing, shape bucketing, stream-state commit |
+| 2 Code2Wav | inner exact-shape NPUGraph for the CFM DiT estimator | encoder, timestep embedding, HiFT/RNG, request parsing, stream-state commit |
 
 Stage 2 keeps `enforce_eager: true` for the generation runner because its
 Python request metadata and per-request cache dictionaries are not valid
-outer-graph inputs. The tensor-only backend captures lazily by batch size,
-token length, terminal flags, prompt length, and cache tensor shapes. It stores
-up to 32 graphs by default and falls back to eager execution for unsupported
-operators, failed captures, or additional shapes. Tune or disable this with
-`code2wav_max_npu_graphs` and `code2wav_enable_npu_graph` in the connector
-`extra` config.
+outer-graph inputs. The backend captures only the deterministic CFM DiT
+estimator, with an exact graph key for each tensor shape. Timestep embedding
+stays eager because the upstream implementation creates a CPU frequency tensor;
+HiFT stays eager because it generates random phase. The graph cache stores up
+to 32 entries by default, after which unseen shapes run eagerly.
+
+An ACL graph capture failure is fatal to that Stage-2 process because older
+torch-npu releases can leave allocator and RNG capture state invalid. Restart
+the service after a capture failure. To run without capture, set
+`code2wav_enable_npu_graph: false` before startup. Tune the cache limit with
+`code2wav_max_npu_graphs` in the connector `extra` config. Graph mode also
+requires `ASCEND_LAUNCH_BLOCKING` to be unset or set to `0`.
 
 The inner NPUGraph is independent of the outer runner setting, so do not use a
 global `--enforce-eager` override when Stage 0/1 `PIECEWISE` replay is desired.
@@ -231,7 +237,7 @@ speech output (TTS)"** checkbox on / off.
   `MiniCPMO` config / model class.
 - Stage 0 Thinker and Stage 1 Talker enable vLLM CUDA Graphs. Stage 2 remains
   eager on CUDA. On Ascend, its request orchestration stays eager while the
-  exact-shape Flow/CFM/HiFT backend uses inner NPUGraph replay.
+  exact-shape CFM DiT estimator uses inner NPUGraph replay.
 - All default stages use `max_num_seqs: 4` to reduce cross-process GPU
   contention. Talker AR
   state and Code2Wav caches are request-owned; Code2Wav batches only

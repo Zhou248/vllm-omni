@@ -17,8 +17,8 @@ connectors:
       connector_get_max_wait: 300
       codec_chunk_frames: 25
       codec_left_context_frames: 3
-      # Stage 2 keeps request/state orchestration eager, while its exact-shape
-      # Flow/CFM/HiFT tensor kernels replay through inner NPUGraphs on Ascend.
+      # Stage 2 keeps encoder, HiFT, RNG, and request/state orchestration eager.
+      # Only exact-shape CFM DiT estimator kernels replay through NPUGraph.
       code2wav_enable_npu_graph: true
       code2wav_max_npu_graphs: 32
 
