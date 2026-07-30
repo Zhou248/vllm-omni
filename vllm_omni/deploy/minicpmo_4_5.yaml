@@ -14,6 +14,10 @@ connectors:
       connector_get_max_wait: 300
       codec_chunk_frames: 25
       codec_left_context_frames: 3
+      # Stage 2 keeps encoder, HiFT, RNG, and request/state orchestration eager.
+      # Only exact-shape CFM DiT estimator kernels replay through NPUGraph.
+      code2wav_enable_npu_graph: true
+      code2wav_max_npu_graphs: 32
 
 stages:
   - stage_id: 0
@@ -62,6 +66,8 @@ stages:
   - stage_id: 2
     max_num_seqs: 4
     gpu_memory_utilization: 0.15
+    # Dynamic request bucketing cannot use the runner's outer full graph.
+    # The Code2Wav backend captures its static estimator buckets internally.
     enforce_eager: true
     enable_chunked_prefill: false
     max_num_batched_tokens: 65536

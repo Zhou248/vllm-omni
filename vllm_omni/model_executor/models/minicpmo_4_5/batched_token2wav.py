@@ -4,15 +4,18 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
 from contextlib import nullcontext
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Protocol
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from vllm.logger import init_logger
 
 _SILENCE_TOKEN = 4218
+logger = init_logger(__name__)
 
 
 def _autocast_disabled(device: torch.device):
@@ -30,7 +33,7 @@ def _autocast_disabled(device: torch.device):
 
 
 def tensor_signature(value: torch.Tensor) -> tuple[tuple[int, ...], str, str]:
-    return tuple(value.shape), str(value.dtype), value.device.type
+    return tuple(value.shape), str(value.dtype), str(value.device)
 
 
 def state_shape_signature(state: BatchedToken2WavState) -> tuple[Any, ...]:
@@ -52,6 +55,25 @@ class BatchedToken2WavState:
     hift_cache: dict[str, torch.Tensor]
 
 
+class _ReplayGraph(Protocol):
+    def replay(self) -> None: ...
+
+
+@dataclass
+class _CapturedDeviceGraph:
+    graph: _ReplayGraph
+    static_inputs: tuple[torch.Tensor, ...]
+    static_outputs: tuple[torch.Tensor, ...]
+
+    def replay(self, inputs: tuple[torch.Tensor, ...]) -> tuple[torch.Tensor, ...]:
+        for static, current in zip(self.static_inputs, inputs, strict=True):
+            static.copy_(current)
+        self.graph.replay()
+        # Replay overwrites persistent graph outputs. Streaming request state
+        # must own independent buffers before the next replay.
+        return tuple(output.detach().clone() for output in self.static_outputs)
+
+
 class BatchedToken2Wav(nn.Module):
     """Drive Token2wav's modules with dynamically-sized, request-owned caches.
 
@@ -60,7 +82,13 @@ class BatchedToken2Wav(nn.Module):
     asset loader and prompt feature extractor.
     """
 
-    def __init__(self, token2wav: Any):
+    def __init__(
+        self,
+        token2wav: Any,
+        *,
+        enable_npu_graphs: bool = False,
+        max_npu_graphs: int = 32,
+    ):
         super().__init__()
         self._token2wav = token2wav
         self.flow = token2wav.flow
@@ -96,6 +124,143 @@ class BatchedToken2Wav(nn.Module):
             persistent=False,
         )
         self._prompt_features: dict[tuple[str, str], PromptFeatures] = {}
+        self._enable_npu_graphs = bool(enable_npu_graphs)
+        self._max_npu_graphs = max(0, int(max_npu_graphs))
+        self._npu_graphs: dict[tuple[Any, ...], _CapturedDeviceGraph] = {}
+        self._failed_npu_graphs: set[tuple[Any, ...]] = set()
+        self._npu_graph_hits = 0
+        self._npu_graph_pool: object | None = None
+        if self._enable_npu_graphs and self.flow.training:
+            raise ValueError("MiniCPM-o Code2Wav NPU graph capture requires flow.eval()")
+        if self._enable_npu_graphs and self.speech_window.device.type == "npu" and not self._npu_graph_supported():
+            raise RuntimeError(
+                "MiniCPM-o Code2Wav NPU graph capture requires torch.npu "
+                "NPUGraph, graph, is_current_stream_capturing, and synchronize APIs."
+            )
+
+    @staticmethod
+    def _npu_graph_supported() -> bool:
+        npu = getattr(torch, "npu", None)
+        return npu is not None and all(
+            hasattr(npu, name)
+            for name in (
+                "NPUGraph",
+                "graph",
+                "is_current_stream_capturing",
+                "synchronize",
+            )
+        )
+
+    @staticmethod
+    def _npu_stream_is_capturing() -> bool:
+        npu = getattr(torch, "npu", None)
+        is_capturing = getattr(npu, "is_current_stream_capturing", None)
+        if not callable(is_capturing):
+            return False
+        try:
+            return bool(is_capturing())
+        except (RuntimeError, TypeError):
+            return False
+
+    def _npu_graph_eligible(self, inputs: tuple[torch.Tensor, ...]) -> bool:
+        return (
+            bool(inputs)
+            and inputs[0].device.type == "npu"
+            and self._npu_graph_supported()
+            and not self._npu_stream_is_capturing()
+        )
+
+    @property
+    def npu_graph_stats(self) -> dict[str, int]:
+        return {
+            "captures": len(self._npu_graphs),
+            "failed": len(self._failed_npu_graphs),
+            "hits": self._npu_graph_hits,
+        }
+
+    def _capture_npu_graph(
+        self,
+        inputs: tuple[torch.Tensor, ...],
+        compute: Callable[..., tuple[torch.Tensor, ...]],
+    ) -> _CapturedDeviceGraph:
+        npu = torch.npu
+        static_inputs = tuple(value.detach().clone() for value in inputs)
+        npu.synchronize()
+        graph = npu.NPUGraph()
+        if self._npu_graph_pool is None:
+            from vllm.platforms import current_platform
+
+            self._npu_graph_pool = current_platform.get_global_graph_pool()
+        with torch.inference_mode(), npu.graph(graph, pool=self._npu_graph_pool):
+            static_outputs = compute(*static_inputs)
+        npu.synchronize()
+        return _CapturedDeviceGraph(
+            graph=graph,
+            static_inputs=static_inputs,
+            static_outputs=static_outputs,
+        )
+
+    def _run_graphable(
+        self,
+        operation: str,
+        inputs: tuple[torch.Tensor, ...],
+        constants: tuple[object, ...],
+        compute: Callable[..., tuple[torch.Tensor, ...]],
+    ) -> tuple[torch.Tensor, ...]:
+        if self._failed_npu_graphs:
+            raise RuntimeError(
+                "MiniCPM-o Code2Wav cannot continue after a failed NPU graph capture; "
+                "restart the stage process and disable code2wav_enable_npu_graph "
+                "before retrying."
+            )
+        graph_enabled = self._enable_npu_graphs and self._max_npu_graphs > 0 and self._npu_graph_eligible(inputs)
+        if not graph_enabled:
+            return compute(*inputs)
+
+        key = (
+            operation,
+            constants,
+            tuple(tensor_signature(value) for value in inputs),
+        )
+        graph = self._npu_graphs.get(key)
+        if graph is not None:
+            self._npu_graph_hits += 1
+            if self._npu_graph_hits == 1:
+                logger.info("MiniCPM-o Code2Wav started NPU graph replay")
+            return graph.replay(inputs)
+
+        # Prime lazy kernels and allocator state before capture. The next call
+        # with the same exact tensor signature replays this graph.
+        eager_outputs = compute(*inputs)
+        if len(self._npu_graphs) >= self._max_npu_graphs:
+            logger.warning_once(
+                "MiniCPM-o Code2Wav reached the %d-entry NPU graph limit; new tensor shapes will use eager execution.",
+                self._max_npu_graphs,
+            )
+            return eager_outputs
+        try:
+            self._npu_graphs[key] = self._capture_npu_graph(inputs, compute)
+        except Exception as exc:
+            self._failed_npu_graphs.add(key)
+            self._enable_npu_graphs = False
+            logger.exception(
+                "MiniCPM-o Code2Wav failed to capture NPU graph for %s; "
+                "the torch-npu allocator/RNG capture state may be invalid and "
+                "this stage process must be restarted.",
+                operation,
+            )
+            raise RuntimeError(
+                "MiniCPM-o Code2Wav NPU graph capture failed for "
+                f"{operation}; restart the stage process. To run eagerly, set "
+                "code2wav_enable_npu_graph=false before starting the service."
+            ) from exc
+        logger.info(
+            "MiniCPM-o Code2Wav captured NPU graph %d/%d for %s",
+            len(self._npu_graphs),
+            self._max_npu_graphs,
+            operation,
+        )
+        return eager_outputs
 
     def prepare_prompt(self, prompt_cache_id: str, prompt_wav: str) -> PromptFeatures:
         cache_key = (prompt_cache_id, prompt_wav)
@@ -140,6 +305,15 @@ class BatchedToken2Wav(nn.Module):
             "cuda",
             dtype=torch.float16,
         )
+
+    def _flow_execution_context(self, device: torch.device):
+        if device.type != "npu":
+            return nullcontext()
+        from vllm_omni.platforms.npu.models.step_audio2_token2wav import (
+            npu_token2wav_sdpa_context,
+        )
+
+        return npu_token2wav_sdpa_context(require_math=self._enable_npu_graphs)
 
     def _pre_lookahead_len(self) -> int | None:
         """Right-context width of the encoder's pre-lookahead convolution.
@@ -194,13 +368,13 @@ class BatchedToken2Wav(nn.Module):
         *,
         x: torch.Tensor,
         mu: torch.Tensor,
-        time: torch.Tensor,
+        time_embedding: torch.Tensor,
         speakers: torch.Tensor,
         cond: torch.Tensor,
         cnn_cache: torch.Tensor | None,
         att_cache: torch.Tensor | None,
     ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
-        time_embedding = estimator.t_embedder(time).unsqueeze(1)
+        time_embedding = time_embedding.unsqueeze(1)
         width = int(x.shape[-1])
         speaker_features = speakers.unsqueeze(-1).expand(-1, -1, width)
         estimator_input = torch.cat((x, mu, speaker_features, cond), dim=1)
@@ -217,6 +391,54 @@ class BatchedToken2Wav(nn.Module):
             att_out,
         )
         return result, cnn_out, att_out
+
+    def _run_estimator_step(
+        self,
+        estimator: nn.Module,
+        *,
+        x: torch.Tensor,
+        mu: torch.Tensor,
+        time_embedding: torch.Tensor,
+        speakers: torch.Tensor,
+        cond: torch.Tensor,
+        cnn_cache: torch.Tensor | None,
+        att_cache: torch.Tensor | None,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor]:
+        if (cnn_cache is None) != (att_cache is None):
+            raise ValueError("estimator CNN and attention caches must both be present or absent")
+
+        if cnn_cache is None:
+            return self._run_graphable(
+                "cfm_estimator",
+                (x, mu, time_embedding, speakers, cond),
+                (False,),
+                lambda step_x, step_mu, step_time, step_speakers, step_cond: self._estimator_step(
+                    estimator,
+                    x=step_x,
+                    mu=step_mu,
+                    time_embedding=step_time,
+                    speakers=step_speakers,
+                    cond=step_cond,
+                    cnn_cache=None,
+                    att_cache=None,
+                ),
+            )
+
+        return self._run_graphable(
+            "cfm_estimator",
+            (x, mu, time_embedding, speakers, cond, cnn_cache, att_cache),
+            (True,),
+            lambda step_x, step_mu, step_time, step_speakers, step_cond, step_cnn, step_att: self._estimator_step(
+                estimator,
+                x=step_x,
+                mu=step_mu,
+                time_embedding=step_time,
+                speakers=step_speakers,
+                cond=step_cond,
+                cnn_cache=step_cnn,
+                att_cache=step_att,
+            ),
+        )
 
     def _decode_cfm(
         self,
@@ -248,20 +470,31 @@ class BatchedToken2Wav(nn.Module):
         )
         timeline = 1 - torch.cos(timeline * 0.5 * torch.pi)
         time = timeline[0].expand(batch_size)
+        step_times: list[torch.Tensor] = []
+        step_dts: list[torch.Tensor] = []
+        dt = timeline[1] - timeline[0]
+        for step in range(self.n_timesteps):
+            step_times.append(torch.cat((time, time), dim=0))
+            step_dts.append(dt)
+            time = time + dt
+            if step + 1 < self.n_timesteps:
+                dt = timeline[step + 2] - time[0]
+        # The upstream timestep embedder builds frequencies on CPU and copies
+        # them to the accelerator, so it must remain outside graph capture.
+        time_embeddings = tuple(estimator.t_embedder(step_time) for step_time in step_times)
         mu_cfg = torch.cat((mu, torch.zeros_like(mu)), dim=0)
         speakers_cfg = torch.cat((speakers, torch.zeros_like(speakers)), dim=0)
         cond_cfg = torch.cat((cond, torch.zeros_like(cond)), dim=0)
         next_cnn: list[torch.Tensor] = []
         next_att: list[torch.Tensor] = []
-        dt = timeline[1] - timeline[0]
-        for step in range(self.n_timesteps):
+        for step, dt in enumerate(step_dts):
             old_cnn = cnn_cache[step] if cnn_cache is not None else None
             old_att = att_cache[step] if att_cache is not None else None
-            estimate, step_cnn, step_att = self._estimator_step(
+            estimate, step_cnn, step_att = self._run_estimator_step(
                 estimator,
                 x=torch.cat((x, x), dim=0),
                 mu=mu_cfg,
-                time=torch.cat((time, time), dim=0),
+                time_embedding=time_embeddings[step],
                 speakers=speakers_cfg,
                 cond=cond_cfg,
                 cnn_cache=old_cnn,
@@ -270,9 +503,6 @@ class BatchedToken2Wav(nn.Module):
             conditional, unconditional = estimate.split(batch_size, dim=0)
             velocity = (1.0 + decoder.inference_cfg_rate) * conditional - decoder.inference_cfg_rate * unconditional
             x = x + dt * velocity
-            time = time + dt
-            if step + 1 < self.n_timesteps:
-                dt = timeline[step + 2] - time[0]
             next_cnn.append(step_cnn)
             next_att.append(step_att)
         return x, torch.stack(next_cnn), torch.stack(next_att)
@@ -328,7 +558,7 @@ class BatchedToken2Wav(nn.Module):
             (batch_size, 3 if lookahead_width is None else lookahead_width),
             _SILENCE_TOKEN,
         )
-        with self._autocast(prompt_tokens.device):
+        with self._flow_execution_context(prompt_tokens.device), self._autocast(prompt_tokens.device):
             hidden, conformer_cnn, conformer_att = self._encode_chunk(
                 torch.cat((prompt_tokens, lookahead), dim=1),
                 last_chunk=False,
@@ -408,7 +638,7 @@ class BatchedToken2Wav(nn.Module):
                 )
         flow_cache = self._stack_flow_cache(states)
         speakers = features.speaker_embedding.expand(batch_size, -1)
-        with self._autocast(tokens.device):
+        with self._flow_execution_context(tokens.device), self._autocast(tokens.device):
             hidden, conformer_cnn, conformer_att = self._encode_chunk(
                 tokens,
                 last_chunk=last_chunk or flush_encoder,
