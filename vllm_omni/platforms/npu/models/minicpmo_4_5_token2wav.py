@@ -1,13 +1,12 @@
 # SPDX-License-Identifier: Apache-2.0
 # SPDX-FileCopyrightText: Copyright contributors to the vLLM project
-"""MiniCPM-o 4.5 Token2wav adapter over in-tree ``StepAudio2Token2WavCore``.
+"""Ascend Token2wav adapter over in-tree ``StepAudio2Token2WavCore``.
 
 ``minicpmo_4_5_omni_tts`` historically depended on the external
 ``from stepaudio2 import Token2wav`` entry point (``stepaudio2-minicpmo``).
 That package hard-codes ``.cuda()`` and duplicates the flow/HiFT stack that
-vLLM-Omni already vendors for Step-Audio2 (which also carries the Ascend/NPU
-fixes: HiFT linear downsample, DiT mask expand, MATH SDPA, compile disable,
-PE buffer extension).
+vLLM-Omni already vendors for Step-Audio2. This platform adapter selects the
+in-tree implementation so its Ascend patches remain outside the model package.
 
 This module exposes the same call surface MiniCPM expects
 (``__call__`` / ``set_stream_cache`` / ``stream``) while delegating the
@@ -29,21 +28,7 @@ from vllm_omni.model_executor.models.step_audio2.step_audio2_token2wav import (
 
 
 def _resolve_device(device: str | torch.device | None) -> str:
-    if device is not None:
-        return str(device)
-    try:
-        from vllm_omni.platforms import current_omni_platform
-
-        plat_dev = getattr(current_omni_platform, "device_type", None)
-        if plat_dev:
-            return str(plat_dev)
-    except Exception:
-        pass
-    if torch.cuda.is_available():
-        return "cuda"
-    if hasattr(torch, "npu") and torch.npu.is_available():
-        return "npu"
-    return "cpu"
+    return str(device) if device is not None else "npu"
 
 
 class MiniCPMO45Token2wav:

@@ -63,7 +63,7 @@ def test_minicpmo_cfm_estimator_npugraph_matches_eager():
         .eval()
     )
     graph_runner = NPUExactGraphRunner(max_graphs=4)
-    adapter = BatchedToken2Wav(_Token2Wav(estimator), graph_runner=graph_runner)
+    adapter = BatchedToken2Wav(_Token2Wav(estimator))
 
     def inputs(seed: int):
         def make(shape: tuple[int, ...], offset: float):

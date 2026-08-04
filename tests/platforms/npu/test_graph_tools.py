@@ -174,6 +174,12 @@ def test_code2wav_runtime_rejects_launch_blocking(monkeypatch):
         code2wav_patch.prepare_code2wav_graph_runtime()
 
 
+def test_code2wav_token2wav_adapter_is_platform_owned():
+    token2wav_class = code2wav_patch._get_npu_token2wav_class()
+
+    assert token2wav_class.__module__ == "vllm_omni.platforms.npu.models.minicpmo_4_5_token2wav"
+
+
 @pytest.mark.parametrize(
     ("enabled", "max_graphs", "expected_prepared"),
     [
@@ -188,14 +194,11 @@ def test_code2wav_patch_reads_stage_additional_config(
     max_graphs,
     expected_prepared,
 ):
-    configured = {}
     prepared = 0
 
     class _Backend:
         speech_window = torch.zeros(1)
-
-        def configure_acceleration(self, **kwargs):
-            configured.update(kwargs)
+        flow = SimpleNamespace(training=False)
 
     model = SimpleNamespace(
         backend=None,
@@ -220,8 +223,113 @@ def test_code2wav_patch_reads_stage_additional_config(
 
     assert prepared == expected_prepared
     if expected_prepared:
-        assert isinstance(configured["graph_runner"], NPUExactGraphRunner)
-        assert configured["graph_runner"].max_graphs == max_graphs
+        graph_runner = code2wav_patch._backend_graph_runners[model.backend]
+        assert isinstance(graph_runner, NPUExactGraphRunner)
+        assert graph_runner.max_graphs == max_graphs
     else:
-        assert configured["graph_runner"] is None
-    assert callable(configured["flow_execution_context"])
+        assert model.backend not in code2wav_patch._backend_graph_runners
+
+
+@pytest.mark.parametrize("with_cache", [False, True])
+def test_code2wav_estimator_graph_dispatch_is_platform_owned(monkeypatch, with_cache):
+    calls = []
+
+    class _Backend:
+        pass
+
+    class _Runner:
+        def run(self, operation, inputs, constants, compute):
+            calls.append((operation, inputs, constants))
+            return compute(*inputs)
+
+    backend = _Backend()
+    runner = _Runner()
+    code2wav_patch._backend_graph_runners[backend] = runner
+
+    def estimator_step(
+        instance,
+        estimator,
+        *,
+        x,
+        mu,
+        time_embedding,
+        speakers,
+        cond,
+        cnn_cache,
+        att_cache,
+    ):
+        del instance, estimator, time_embedding, speakers, cond
+        cache_marker = x.new_tensor(0 if cnn_cache is None else 1)
+        return x + mu, cache_marker, cache_marker.clone()
+
+    monkeypatch.setattr(code2wav_patch, "_original_estimator_step", estimator_step)
+    value = torch.tensor([2.0])
+    cache = torch.tensor([1.0]) if with_cache else None
+    outputs = code2wav_patch._patched_estimator_step(
+        backend,
+        object(),
+        x=value,
+        mu=value,
+        time_embedding=value,
+        speakers=value,
+        cond=value,
+        cnn_cache=cache,
+        att_cache=cache,
+    )
+
+    assert calls[0][0] == "cfm_estimator"
+    assert calls[0][2] == (with_cache,)
+    assert len(calls[0][1]) == (7 if with_cache else 5)
+    torch.testing.assert_close(outputs[0], torch.tensor([4.0]))
+    torch.testing.assert_close(outputs[1], torch.tensor(1.0 if with_cache else 0.0))
+
+
+def test_code2wav_platform_wraps_flow_execution_context(monkeypatch):
+    entered = []
+
+    class _Backend:
+        pass
+
+    class _Context:
+        def __init__(self, device, require_math):
+            self.device = device
+            self.require_math = require_math
+
+        def __enter__(self):
+            entered.append((self.device, self.require_math))
+
+        def __exit__(self, exc_type, exc, traceback):
+            return False
+
+    backend = _Backend()
+    code2wav_patch._backend_graph_runners[backend] = NPUExactGraphRunner()
+    monkeypatch.setattr(
+        code2wav_patch,
+        "_flow_execution_context",
+        lambda device, *, require_math: _Context(device, require_math),
+    )
+    monkeypatch.setattr(
+        code2wav_patch,
+        "_original_setup_batch",
+        lambda instance, features, batch_size: ("setup", batch_size),
+    )
+    monkeypatch.setattr(
+        code2wav_patch,
+        "_original_decode_batch",
+        lambda instance, tokens, features, states, *, last_chunk, flush_encoder: (
+            "decode",
+            last_chunk,
+            flush_encoder,
+        ),
+    )
+    features = SimpleNamespace(speech_tokens=torch.zeros(1))
+
+    assert code2wav_patch._patched_setup_batch(backend, features, 3) == ("setup", 3)
+    assert code2wav_patch._patched_decode_batch(
+        backend,
+        torch.zeros(1),
+        features,
+        [],
+        last_chunk=True,
+    ) == ("decode", True, False)
+    assert entered == [(torch.device("cpu"), True), (torch.device("cpu"), True)]

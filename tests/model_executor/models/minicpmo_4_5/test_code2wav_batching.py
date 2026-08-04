@@ -235,33 +235,6 @@ def test_estimator_timestep_embeddings_are_precomputed_per_cfm_call():
     assert token2wav.flow.decoder.estimator.timestep_batches == [4, 4, 4, 4]
 
 
-def test_setup_and_decode_enter_flow_execution_context(monkeypatch):
-    token2wav = _FakeToken2Wav()
-    adapter = BatchedToken2Wav(token2wav)
-    prompt = adapter.prepare_prompt("shared", "/fake/prompt.wav")
-    entered = 0
-
-    class _Context:
-        def __enter__(self):
-            nonlocal entered
-            entered += 1
-
-        def __exit__(self, exc_type, exc, traceback):
-            return False
-
-    monkeypatch.setattr(adapter, "_flow_execution_context", lambda device: _Context())
-
-    states = adapter.setup_batch(prompt, 1)
-    adapter.decode_batch(
-        torch.tensor([[10, 11]]),
-        prompt,
-        states,
-        last_chunk=False,
-    )
-
-    assert entered == 2
-
-
 def test_fade_in_out_limits_overlap_to_available_previous_audio():
     speech = torch.arange(6, dtype=torch.float32).reshape(1, -1)
     previous = torch.full((1, 3), 2.0)
@@ -272,42 +245,6 @@ def test_fade_in_out_limits_overlap_to_available_previous_audio():
     expected = speech.clone()
     expected[..., :3] = speech[..., :3] * window[:3] + previous * window[-3:]
     torch.testing.assert_close(actual, expected)
-
-
-def test_graphable_compute_delegates_to_injected_runner():
-    calls = []
-
-    class _Runner:
-        def run(self, operation, inputs, constants, compute):
-            calls.append((operation, inputs, constants))
-            return compute(*inputs)
-
-    adapter = BatchedToken2Wav(
-        _FakeToken2Wav(),
-        graph_runner=_Runner(),
-    )
-    outputs = adapter._run_graphable(
-        "unit",
-        (torch.tensor([1.0]),),
-        (False,),
-        lambda value: (value + 1,),
-    )
-
-    assert len(calls) == 1
-    assert calls[0][0] == "unit"
-    assert calls[0][2] == (False,)
-    torch.testing.assert_close(outputs[0], torch.tensor([2.0]))
-
-
-def test_graph_runner_requires_eval_mode():
-    token2wav = _FakeToken2Wav()
-    token2wav.flow.train()
-
-    with pytest.raises(ValueError, match=r"flow\.eval"):
-        BatchedToken2Wav(
-            token2wav,
-            graph_runner=SimpleNamespace(run=lambda *args: None),
-        )
 
 
 def test_estimator_cache_stack_split_round_trip_preserves_cfg_rows():

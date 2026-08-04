@@ -44,6 +44,13 @@ def _resolve_model_dir(model_ref: str, revision: str | None = None) -> str:
     return snapshot_download(model_ref, revision=revision, allow_patterns=["assets/*"])
 
 
+def _get_token2wav_class() -> type[Any]:
+    """Resolve the default Token2wav implementation lazily."""
+    from stepaudio2.token2wav import Token2wav
+
+    return Token2wav
+
+
 def _batch_error(reason: str, **details: Any) -> RuntimeError:
     payload = {"reason": reason, **details}
     return RuntimeError(f"MiniCPMO45Code2WavBatchError {json.dumps(payload, sort_keys=True)}")
@@ -65,9 +72,8 @@ def _codec_tensor(value: Any, fallback: torch.Tensor) -> torch.Tensor:
     return fallback.reshape(-1).to(dtype=torch.long)
 
 
-# Keys the runner stamps on every step regardless of stage input (see
-# OmniGPUModelRunner._preprocess and the NPU _gather_runtime_additional_information
-# override). A step carrying only these has no producer payload at all.
+# Keys execution runners stamp on every step regardless of stage input. A step
+# carrying only these has no producer payload at all.
 _RUNNER_STAMPED_KEYS = frozenset({"request_id", "req_id", "generated_len", "meta"})
 
 
@@ -727,19 +733,7 @@ class MiniCPMO45Code2Wav(nn.Module):
         if self.backend is not None:
             return
 
-        from vllm_omni.platforms import current_omni_platform
-
-        if current_omni_platform.is_npu():
-            # NPU/Ascend: the external `stepaudio2` package hard-codes `.cuda()`,
-            # so use the in-tree NPU-aware adapter instead. It delegates to
-            # StepAudio2Token2WavCore, which auto-applies the Ascend fixes
-            # (HiFT linear downsample, DiT mask expand, MATH SDPA) on NPU.
-            from vllm_omni.model_executor.models.minicpmo_4_5.minicpmo_4_5_token2wav import (
-                MiniCPMO45Token2wav as Token2wav,
-            )
-        else:
-            from stepaudio2.token2wav import Token2wav
-
+        Token2wav = _get_token2wav_class()
         extra = self._extra_config()
         # Hub repo ids only need to become local directories once the vocoder
         # assets are actually read; unit tests construct this model with fake
