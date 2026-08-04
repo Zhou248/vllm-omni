@@ -57,27 +57,6 @@ def _scalar(value: Any, default: Any = None) -> Any:
     return default if value is None else value
 
 
-def _config_bool(value: object, default: bool) -> bool:
-    if value is None:
-        return default
-    if isinstance(value, str):
-        return value.strip().lower() in {"1", "true", "yes", "on"}
-    return bool(value)
-
-
-def _prepare_npu_graph_runtime() -> None:
-    """Select graph-capturable ACLNN kernels before Token2Wav is loaded."""
-    if os.environ.get("ASCEND_LAUNCH_BLOCKING") == "1":
-        raise RuntimeError(
-            "MiniCPM-o Code2Wav NPU graph capture is incompatible with "
-            "ASCEND_LAUNCH_BLOCKING=1; unset it or set it to 0 before startup."
-        )
-    npu = torch.npu
-    npu.config.allow_internal_format = False
-    npu.set_compile_mode(jit_compile=False)
-    logger.info("Configured MiniCPM-o Code2Wav NPU graph runtime (allow_internal_format=False, jit_compile=False)")
-
-
 def _codec_tensor(value: Any, fallback: torch.Tensor) -> torch.Tensor:
     if isinstance(value, torch.Tensor):
         return value.reshape(-1).to(device=fallback.device, dtype=torch.long)
@@ -750,17 +729,7 @@ class MiniCPMO45Code2Wav(nn.Module):
 
         from vllm_omni.platforms import current_omni_platform
 
-        extra = self._extra_config()
-        is_npu = current_omni_platform.is_npu()
-        max_npu_graphs = max(0, int(extra.get("code2wav_max_npu_graphs", 32)))
-        enable_npu_graphs = is_npu and max_npu_graphs > 0 and _config_bool(extra.get("code2wav_enable_npu_graph"), True)
-        if is_npu:
-            # NPUOmniPlatform enables internal format for quantized LLM
-            # kernels. Code2Wav uses regular Conv1d/ConvTranspose1d kernels;
-            # internal format lowers them to ACLop Conv2D, which NPUGraph
-            # cannot capture.
-            if enable_npu_graphs:
-                _prepare_npu_graph_runtime()
+        if current_omni_platform.is_npu():
             # NPU/Ascend: the external `stepaudio2` package hard-codes `.cuda()`,
             # so use the in-tree NPU-aware adapter instead. It delegates to
             # StepAudio2Token2WavCore, which auto-applies the Ascend fixes
@@ -771,6 +740,7 @@ class MiniCPMO45Code2Wav(nn.Module):
         else:
             from stepaudio2.token2wav import Token2wav
 
+        extra = self._extra_config()
         # Hub repo ids only need to become local directories once the vocoder
         # assets are actually read; unit tests construct this model with fake
         # paths and must not trigger a hub download (#5442).
@@ -795,13 +765,4 @@ class MiniCPMO45Code2Wav(nn.Module):
             )
         finally:
             torch.set_default_dtype(previous_dtype)
-        self.backend = BatchedToken2Wav(
-            token2wav,
-            enable_npu_graphs=enable_npu_graphs,
-            max_npu_graphs=max_npu_graphs,
-        )
-        if enable_npu_graphs:
-            logger.info(
-                "MiniCPM-o Code2Wav NPU graph replay enabled (max_graphs=%d)",
-                max_npu_graphs,
-            )
+        self.backend = BatchedToken2Wav(token2wav)

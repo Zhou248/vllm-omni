@@ -17,10 +17,6 @@ connectors:
       connector_get_max_wait: 300
       codec_chunk_frames: 25
       codec_left_context_frames: 3
-      # Stage 2 keeps encoder, HiFT, RNG, and request/state orchestration eager.
-      # Only exact-shape CFM DiT estimator kernels replay through NPUGraph.
-      code2wav_enable_npu_graph: true
-      code2wav_max_npu_graphs: 32
 
 stages:
   - stage_id: 0
@@ -80,4 +76,20 @@ stages:
       max_tokens: 65536
       detokenize: true
 
-platforms: {}
+platforms:
+  npu:
+    stages:
+      - stage_id: 0
+        max_num_batched_tokens: 8192
+        compilation_config:
+          cudagraph_mode: PIECEWISE
+      - stage_id: 1
+        max_num_batched_tokens: 8192
+        compilation_config:
+          cudagraph_mode: PIECEWISE
+      - stage_id: 2
+        # Stage 2 stays outer-eager and captures only exact-shape CFM DiT
+        # estimator kernels through the NPU platform patch.
+        additional_config:
+          code2wav_enable_npu_graph: true
+          code2wav_max_npu_graphs: 32

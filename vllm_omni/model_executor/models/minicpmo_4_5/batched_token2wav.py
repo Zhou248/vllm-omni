@@ -5,17 +5,15 @@
 from __future__ import annotations
 
 from collections.abc import Callable
-from contextlib import nullcontext
+from contextlib import AbstractContextManager, nullcontext
 from dataclasses import dataclass
 from typing import Any, Protocol
 
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from vllm.logger import init_logger
 
 _SILENCE_TOKEN = 4218
-logger = init_logger(__name__)
 
 
 def _autocast_disabled(device: torch.device):
@@ -33,7 +31,7 @@ def _autocast_disabled(device: torch.device):
 
 
 def tensor_signature(value: torch.Tensor) -> tuple[tuple[int, ...], str, str]:
-    return tuple(value.shape), str(value.dtype), str(value.device)
+    return tuple(value.shape), str(value.dtype), value.device.type
 
 
 def state_shape_signature(state: BatchedToken2WavState) -> tuple[Any, ...]:
@@ -55,23 +53,16 @@ class BatchedToken2WavState:
     hift_cache: dict[str, torch.Tensor]
 
 
-class _ReplayGraph(Protocol):
-    def replay(self) -> None: ...
+class DeviceGraphRunner(Protocol):
+    """Platform-provided exact-signature graph runner."""
 
-
-@dataclass
-class _CapturedDeviceGraph:
-    graph: _ReplayGraph
-    static_inputs: tuple[torch.Tensor, ...]
-    static_outputs: tuple[torch.Tensor, ...]
-
-    def replay(self, inputs: tuple[torch.Tensor, ...]) -> tuple[torch.Tensor, ...]:
-        for static, current in zip(self.static_inputs, inputs, strict=True):
-            static.copy_(current)
-        self.graph.replay()
-        # Replay overwrites persistent graph outputs. Streaming request state
-        # must own independent buffers before the next replay.
-        return tuple(output.detach().clone() for output in self.static_outputs)
+    def run(
+        self,
+        operation: str,
+        inputs: tuple[torch.Tensor, ...],
+        constants: tuple[object, ...],
+        compute: Callable[..., tuple[torch.Tensor, ...]],
+    ) -> tuple[torch.Tensor, ...]: ...
 
 
 class BatchedToken2Wav(nn.Module):
@@ -86,8 +77,8 @@ class BatchedToken2Wav(nn.Module):
         self,
         token2wav: Any,
         *,
-        enable_npu_graphs: bool = False,
-        max_npu_graphs: int = 32,
+        graph_runner: DeviceGraphRunner | None = None,
+        flow_execution_context: Callable[[torch.device], AbstractContextManager[None]] | None = None,
     ):
         super().__init__()
         self._token2wav = token2wav
@@ -124,81 +115,22 @@ class BatchedToken2Wav(nn.Module):
             persistent=False,
         )
         self._prompt_features: dict[tuple[str, str], PromptFeatures] = {}
-        self._enable_npu_graphs = bool(enable_npu_graphs)
-        self._max_npu_graphs = max(0, int(max_npu_graphs))
-        self._npu_graphs: dict[tuple[Any, ...], _CapturedDeviceGraph] = {}
-        self._failed_npu_graphs: set[tuple[Any, ...]] = set()
-        self._npu_graph_hits = 0
-        self._npu_graph_pool: object | None = None
-        if self._enable_npu_graphs and self.flow.training:
-            raise ValueError("MiniCPM-o Code2Wav NPU graph capture requires flow.eval()")
-        if self._enable_npu_graphs and self.speech_window.device.type == "npu" and not self._npu_graph_supported():
-            raise RuntimeError(
-                "MiniCPM-o Code2Wav NPU graph capture requires torch.npu "
-                "NPUGraph, graph, is_current_stream_capturing, and synchronize APIs."
-            )
-
-    @staticmethod
-    def _npu_graph_supported() -> bool:
-        npu = getattr(torch, "npu", None)
-        return npu is not None and all(
-            hasattr(npu, name)
-            for name in (
-                "NPUGraph",
-                "graph",
-                "is_current_stream_capturing",
-                "synchronize",
-            )
+        self.configure_acceleration(
+            graph_runner=graph_runner,
+            flow_execution_context=flow_execution_context,
         )
 
-    @staticmethod
-    def _npu_stream_is_capturing() -> bool:
-        npu = getattr(torch, "npu", None)
-        is_capturing = getattr(npu, "is_current_stream_capturing", None)
-        if not callable(is_capturing):
-            return False
-        try:
-            return bool(is_capturing())
-        except (RuntimeError, TypeError):
-            return False
-
-    def _npu_graph_eligible(self, inputs: tuple[torch.Tensor, ...]) -> bool:
-        return (
-            bool(inputs)
-            and inputs[0].device.type == "npu"
-            and self._npu_graph_supported()
-            and not self._npu_stream_is_capturing()
-        )
-
-    @property
-    def npu_graph_stats(self) -> dict[str, int]:
-        return {
-            "captures": len(self._npu_graphs),
-            "failed": len(self._failed_npu_graphs),
-            "hits": self._npu_graph_hits,
-        }
-
-    def _capture_npu_graph(
+    def configure_acceleration(
         self,
-        inputs: tuple[torch.Tensor, ...],
-        compute: Callable[..., tuple[torch.Tensor, ...]],
-    ) -> _CapturedDeviceGraph:
-        npu = torch.npu
-        static_inputs = tuple(value.detach().clone() for value in inputs)
-        npu.synchronize()
-        graph = npu.NPUGraph()
-        if self._npu_graph_pool is None:
-            from vllm.platforms import current_platform
-
-            self._npu_graph_pool = current_platform.get_global_graph_pool()
-        with torch.inference_mode(), npu.graph(graph, pool=self._npu_graph_pool):
-            static_outputs = compute(*static_inputs)
-        npu.synchronize()
-        return _CapturedDeviceGraph(
-            graph=graph,
-            static_inputs=static_inputs,
-            static_outputs=static_outputs,
-        )
+        *,
+        graph_runner: DeviceGraphRunner | None,
+        flow_execution_context: Callable[[torch.device], AbstractContextManager[None]] | None,
+    ) -> None:
+        """Install optional platform acceleration without platform imports."""
+        if graph_runner is not None and self.flow.training:
+            raise ValueError("MiniCPM-o Code2Wav graph capture requires flow.eval()")
+        self._graph_runner = graph_runner
+        self._flow_execution_context_factory = flow_execution_context
 
     def _run_graphable(
         self,
@@ -207,60 +139,9 @@ class BatchedToken2Wav(nn.Module):
         constants: tuple[object, ...],
         compute: Callable[..., tuple[torch.Tensor, ...]],
     ) -> tuple[torch.Tensor, ...]:
-        if self._failed_npu_graphs:
-            raise RuntimeError(
-                "MiniCPM-o Code2Wav cannot continue after a failed NPU graph capture; "
-                "restart the stage process and disable code2wav_enable_npu_graph "
-                "before retrying."
-            )
-        graph_enabled = self._enable_npu_graphs and self._max_npu_graphs > 0 and self._npu_graph_eligible(inputs)
-        if not graph_enabled:
+        if self._graph_runner is None:
             return compute(*inputs)
-
-        key = (
-            operation,
-            constants,
-            tuple(tensor_signature(value) for value in inputs),
-        )
-        graph = self._npu_graphs.get(key)
-        if graph is not None:
-            self._npu_graph_hits += 1
-            if self._npu_graph_hits == 1:
-                logger.info("MiniCPM-o Code2Wav started NPU graph replay")
-            return graph.replay(inputs)
-
-        # Prime lazy kernels and allocator state before capture. The next call
-        # with the same exact tensor signature replays this graph.
-        eager_outputs = compute(*inputs)
-        if len(self._npu_graphs) >= self._max_npu_graphs:
-            logger.warning_once(
-                "MiniCPM-o Code2Wav reached the %d-entry NPU graph limit; new tensor shapes will use eager execution.",
-                self._max_npu_graphs,
-            )
-            return eager_outputs
-        try:
-            self._npu_graphs[key] = self._capture_npu_graph(inputs, compute)
-        except Exception as exc:
-            self._failed_npu_graphs.add(key)
-            self._enable_npu_graphs = False
-            logger.exception(
-                "MiniCPM-o Code2Wav failed to capture NPU graph for %s; "
-                "the torch-npu allocator/RNG capture state may be invalid and "
-                "this stage process must be restarted.",
-                operation,
-            )
-            raise RuntimeError(
-                "MiniCPM-o Code2Wav NPU graph capture failed for "
-                f"{operation}; restart the stage process. To run eagerly, set "
-                "code2wav_enable_npu_graph=false before starting the service."
-            ) from exc
-        logger.info(
-            "MiniCPM-o Code2Wav captured NPU graph %d/%d for %s",
-            len(self._npu_graphs),
-            self._max_npu_graphs,
-            operation,
-        )
-        return eager_outputs
+        return self._graph_runner.run(operation, inputs, constants, compute)
 
     def prepare_prompt(self, prompt_cache_id: str, prompt_wav: str) -> PromptFeatures:
         cache_key = (prompt_cache_id, prompt_wav)
@@ -306,14 +187,10 @@ class BatchedToken2Wav(nn.Module):
             dtype=torch.float16,
         )
 
-    def _flow_execution_context(self, device: torch.device):
-        if device.type != "npu":
+    def _flow_execution_context(self, device: torch.device) -> AbstractContextManager[None]:
+        if self._flow_execution_context_factory is None:
             return nullcontext()
-        from vllm_omni.platforms.npu.models.step_audio2_token2wav import (
-            npu_token2wav_sdpa_context,
-        )
-
-        return npu_token2wav_sdpa_context(require_math=self._enable_npu_graphs)
+        return self._flow_execution_context_factory(device)
 
     def _pre_lookahead_len(self) -> int | None:
         """Right-context width of the encoder's pre-lookahead convolution.
