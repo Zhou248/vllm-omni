@@ -33,6 +33,7 @@ from vllm_omni.platforms import current_omni_platform
 logger = init_logger(__name__)
 
 _REPETITION_WINDOW = 16
+_REPETITION_PENALTY_CHUNK_SIZE = 16
 _MIN_AUDIO_TOKENS = 64
 _MAX_AUDIO_TOKENS = 2048
 _AUDIO_TOKENS_PER_TEXT_TOKEN = 10
@@ -93,19 +94,32 @@ def _apply_batched_repetition_penalty(
     if penalty == 1.0:
         return logits
 
-    encoded_rows: list[torch.Tensor] = []
-    for row, history in enumerate(histories):
-        recent = history.reshape(-1)[-window_size:].to(device=logits.device, dtype=torch.long)
-        if recent.numel() > 0:
-            encoded_rows.append(recent + row * vocab_size)
-    if not encoded_rows:
+    if batch_size == 0:
         return logits
 
-    encoded = encoded_rows[0] if len(encoded_rows) == 1 else torch.cat(encoded_rows)
-    frequencies = torch.bincount(encoded, minlength=batch_size * vocab_size).reshape(batch_size, vocab_size)
-    frequencies = frequencies.to(dtype=logits.dtype)
-    alpha = torch.pow(torch.as_tensor(penalty, device=logits.device, dtype=logits.dtype), frequencies)
-    return torch.where(logits < 0, logits * alpha, logits / alpha)
+    penalized = logits.clone()
+    penalty_tensor = torch.as_tensor(penalty, device=logits.device, dtype=logits.dtype)
+    for start in range(0, batch_size, _REPETITION_PENALTY_CHUNK_SIZE):
+        end = min(start + _REPETITION_PENALTY_CHUNK_SIZE, batch_size)
+        chunk_logits = logits[start:end]
+        encoded_rows: list[torch.Tensor] = []
+        for local_row, history in enumerate(histories[start:end]):
+            recent = history.reshape(-1)[-window_size:].to(device=logits.device, dtype=torch.long)
+            if recent.numel() > 0:
+                encoded_rows.append(recent + local_row * vocab_size)
+        if not encoded_rows:
+            continue
+
+        # Bound the int64 bincount workspace independently of request concurrency.
+        encoded = encoded_rows[0] if len(encoded_rows) == 1 else torch.cat(encoded_rows)
+        frequencies = torch.bincount(
+            encoded,
+            minlength=(end - start) * vocab_size,
+        ).reshape(end - start, vocab_size)
+        alpha = torch.pow(penalty_tensor, frequencies.to(dtype=logits.dtype))
+        penalized[start:end] = torch.where(chunk_logits < 0, chunk_logits * alpha, chunk_logits / alpha)
+
+    return penalized
 
 
 def _apply_top_k_top_p(
@@ -445,9 +459,10 @@ class MiniCPMO45OmniTTSForConditionalGeneration(nn.Module, SupportsPP):
             min_tokens_to_keep=3,
         )
         probabilities = torch.softmax(logits, dim=-1)
-        # Keep request-local RNG streams so compaction or another request
-        # finishing cannot perturb a request's codec sequence. The expensive
-        # projection and logit transforms above remain fully batched.
+        # torch.multinomial accepts one generator for the entire call. Keep it
+        # per row so compaction, request ordering, or another request finishing
+        # cannot perturb request-local RNG streams; the expensive projection
+        # and logit transforms above remain fully batched.
         return torch.cat(
             [
                 torch.multinomial(
@@ -459,16 +474,6 @@ class MiniCPMO45OmniTTSForConditionalGeneration(nn.Module, SupportsPP):
             ],
             dim=0,
         ).reshape(-1)
-
-    def _sample_audio_code(
-        self,
-        hidden_state: torch.Tensor,
-        history: torch.Tensor,
-        request_id: str,
-        step: int,
-    ) -> torch.Tensor:
-        """Compatibility wrapper for one request."""
-        return self._sample_audio_codes(hidden_state, (history,), (request_id,), (step,)).reshape(())
 
     def make_omni_output(
         self,
@@ -491,6 +496,8 @@ class MiniCPMO45OmniTTSForConditionalGeneration(nn.Module, SupportsPP):
             )
         emit_duplex_metadata = any(isinstance(info, dict) and info.get("native_duplex") is True for info in infos)
 
+        # Rows default to continue. Only previously finished or newly terminal
+        # requests stop; prefill/ineligible rows stay aligned as False.
         stop_flags = [False] * len(infos)
         native_duplex_flags: list[torch.Tensor] = []
         duplex_epochs: list[torch.Tensor] = []

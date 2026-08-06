@@ -12,6 +12,7 @@ from vllm_omni.model_executor.models.minicpmo_4_5.minicpmo_4_5_omni import (
     MiniCPMO45OmniForConditionalGeneration,
 )
 from vllm_omni.model_executor.models.minicpmo_4_5.minicpmo_4_5_omni_tts import (
+    _REPETITION_PENALTY_CHUNK_SIZE,
     MiniCPMO45OmniTTSForConditionalGeneration,
     _apply_batched_repetition_penalty,
     _max_audio_tokens,
@@ -89,6 +90,35 @@ def _reference_repetition_penalty(
     return torch.where(logits < 0, logits * alpha, logits / alpha)
 
 
+def _make_sampling_talker() -> MiniCPMO45OmniTTSForConditionalGeneration:
+    talker = _make_talker()
+    talker._codec_temperature = 0.8
+    talker._codec_top_k = 5
+    talker._codec_top_p = 0.85
+    talker._codec_repetition_penalty = 1.05
+    talker._request_audio_states = {
+        "req-a": {"min_tokens": 2},
+        "req-b": {"min_tokens": 0},
+    }
+    talker.head_code = nn.ModuleList([nn.Linear(2, 8, bias=False)])
+    with torch.no_grad():
+        talker.head_code[0].weight.copy_(
+            torch.tensor(
+                [
+                    [0.1, -0.3],
+                    [0.2, 0.4],
+                    [-0.5, 0.2],
+                    [0.7, -0.1],
+                    [-0.2, 0.8],
+                    [0.6, 0.3],
+                    [-0.4, -0.7],
+                    [0.3, 0.5],
+                ]
+            )
+        )
+    return talker
+
+
 @pytest.mark.parametrize(
     ("condition_tokens", "expected"),
     [(3, 64), (100, 1000), (1000, 2048)],
@@ -153,32 +183,68 @@ def test_batched_repetition_penalty_matches_request_local_rows() -> None:
     assert torch.equal(actual, expected)
 
 
-def test_batched_codec_sampling_preserves_request_rng_after_compaction() -> None:
-    talker = _make_talker()
-    talker._codec_temperature = 0.8
-    talker._codec_top_k = 5
-    talker._codec_top_p = 0.85
-    talker._codec_repetition_penalty = 1.05
-    talker._request_audio_states = {
-        "req-a": {"min_tokens": 2},
-        "req-b": {"min_tokens": 0},
-    }
-    talker.head_code = nn.ModuleList([nn.Linear(2, 8, bias=False)])
-    with torch.no_grad():
-        talker.head_code[0].weight.copy_(
-            torch.tensor(
-                [
-                    [0.1, -0.3],
-                    [0.2, 0.4],
-                    [-0.5, 0.2],
-                    [0.7, -0.1],
-                    [-0.2, 0.8],
-                    [0.6, 0.3],
-                    [-0.4, -0.7],
-                    [0.3, 0.5],
-                ]
+def test_batched_repetition_penalty_matches_rows_across_chunks(mocker) -> None:
+    batch_size = 2 * _REPETITION_PENALTY_CHUNK_SIZE + 1
+    vocab_size = 11
+    logits = torch.arange(batch_size * vocab_size, dtype=torch.float32).reshape(batch_size, vocab_size) - 100
+    histories = [
+        torch.tensor([(row + offset) % vocab_size for offset in range(row % 7)], dtype=torch.long)
+        for row in range(batch_size)
+    ]
+
+    bincount = mocker.spy(torch, "bincount")
+    actual = _apply_batched_repetition_penalty(
+        logits,
+        histories,
+        penalty=1.2,
+        window_size=5,
+    )
+    expected = torch.cat(
+        [
+            _reference_repetition_penalty(
+                logits[row : row + 1],
+                history,
+                penalty=1.2,
+                window_size=5,
             )
-        )
+            for row, history in enumerate(histories)
+        ],
+        dim=0,
+    )
+
+    assert torch.equal(actual, expected)
+    assert [call.kwargs["minlength"] for call in bincount.call_args_list] == [
+        _REPETITION_PENALTY_CHUNK_SIZE * vocab_size,
+        _REPETITION_PENALTY_CHUNK_SIZE * vocab_size,
+        vocab_size,
+    ]
+
+
+def test_batched_codec_sampling_is_request_order_independent() -> None:
+    talker = _make_sampling_talker()
+    histories = [torch.tensor([1, 1, 2]), torch.tensor([3, 4, 4])]
+    hidden = torch.tensor([[0.25, -0.75], [-0.5, 0.5]])
+
+    forward_order = talker._sample_audio_codes(
+        hidden,
+        histories,
+        ["req-a", "req-b"],
+        [0, 0],
+    )
+    talker._request_generators = {}
+    reverse_order = talker._sample_audio_codes(
+        hidden.flip(0),
+        list(reversed(histories)),
+        ["req-b", "req-a"],
+        [0, 0],
+    )
+
+    assert torch.equal(forward_order[0], reverse_order[1])
+    assert torch.equal(forward_order[1], reverse_order[0])
+
+
+def test_batched_codec_sampling_preserves_request_rng_after_compaction() -> None:
+    talker = _make_sampling_talker()
     history_a = torch.tensor([1, 1, 2])
     history_b = torch.tensor([3, 4, 4])
     hidden_a = torch.tensor([[0.25, -0.75]])
@@ -198,8 +264,18 @@ def test_batched_codec_sampling_preserves_request_rng_after_compaction() -> None
     )
 
     talker._request_generators = {}
-    standalone_b_first = talker._sample_audio_code(hidden_b, history_b, "req-b", 0)
-    standalone_b_second = talker._sample_audio_code(hidden_b, history_b, "req-b", 1)
+    standalone_b_first = talker._sample_audio_codes(
+        hidden_b,
+        [history_b],
+        ["req-b"],
+        [0],
+    )[0]
+    standalone_b_second = talker._sample_audio_codes(
+        hidden_b,
+        [history_b],
+        ["req-b"],
+        [1],
+    )[0]
 
     assert torch.equal(first_batch[1], standalone_b_first)
     assert torch.equal(compacted_b[0], standalone_b_second)
